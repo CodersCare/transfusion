@@ -1,0 +1,21 @@
+{
+    "name": "t3thi/transfusion",
+    "type": "typo3-cms-extension",
+    "description": "Wizard module to deal with TYPO3 connected and free mode translations and to fix the notorious mixed mode",
+    "homepage": "https://typo3.org/community/teams/typo3-development/initiatives/translation-handling",
+    "license": ["GPL-2.0-or-later"],
+    "keywords": ["TYPO3 CMS"],
+    "require": {
+        "typo3/cms-core": "^12.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "T3thi\\Transfusion\\": "Classes/"
+        }
+    },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "transfusion"
+        }
+    }
+}
