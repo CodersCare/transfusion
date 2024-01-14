@@ -6,6 +6,9 @@
             <authorEmail>jh@cybercraft.de</authorEmail>
         </header>
         <body>
+            <trans-unit id="languageColumn.disconnectPageTitle">
+                <source>Disconnect</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>
