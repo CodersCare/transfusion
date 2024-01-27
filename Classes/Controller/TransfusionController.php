@@ -8,6 +8,7 @@ use Doctrine\DBAL\Exception;
 use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
@@ -164,10 +165,17 @@ class TransfusionController
                 && !empty($record[$this->origUid])
                 && $record[$this->translationSource] === $record[$this->origUid]
             ) {
-                $this->dataMap[$table][$record['uid']][$this->translationParent] = $record[$this->origUid];
+                $originalRecord = BackendUtility::getRecord($table, $record[$this->origUid], '*');
+                if (empty($originalRecord['sys_language_uid'])) {
+                    $this->dataMap[$table][$record['uid']][$this->translationParent] = $record[$this->origUid];
+                } else {
+                    $this->missingInformation = true;
+            }
             } else {
-                DebugUtility::debug($record);
                 $this->missingInformation = true;
+            }
+            if ($this->missingInformation) {
+                DebugUtility::debug($record);
             }
         }
     }
