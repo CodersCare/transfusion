@@ -57,16 +57,16 @@
                                 </a>
                             </f:if>
                             <f:if condition="{allowEditContent} && {languageColumn.context.siteLanguage.languageId} && {languageColumn.translationData.hasTranslations} && {languageColumn.translationData.mode} != 'free'">
-                                <a href="#" class="btn btn-default btn-sm t3js-disconnect disabled"
-                                   title="{languageColumn.context.translatePageTitle}"
-                                   data-page="{languageColumn.context.localizedPageRecord.title}"
-                                   data-has-elements="{languageColumn.translationData.hasTranslations as integer}"
-                                   data-table="tt_content"
-                                   data-page-id="{context.pageId}"
-                                   data-language-id="{languageColumn.context.siteLanguage.languageId}"
-                                   data-language-name="{languageColumn.context.siteLanguage.title}">
-                                    <core:icon identifier="actions-localize" />
-                                    {f:translate(key: 'languageColumn.disconnectPageTitle', extensionName: 'transfusion')}
+                                <a href="{transfusion:uri.disconnect(page: languageColumn.context.pageId, language: languageColumn.context.siteLanguage.languageId, language: languageColumn.context.siteLanguage.languageId)}"
+                                   class="btn btn-default btn-sm t3js-modal-trigger"
+                                   title="{f:translate(key: 'LLL:EXT:transfusion/Resources/Private/Language/locallang.xlf:languageColumn.disconnectContent')}"
+                                   data-severity="warning"
+                                   data-title="{f:translate(key: 'languageColumn.disconnect.confirm.title', extensionName: 'transfusion')}"
+                                   data-bs-content="{f:translate(key: 'languageColumn.disconnect.confirm.text', extensionName: 'transfusion')}"
+                                   data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}"
+                                   data-button-ok-text="{f:translate(key: 'languageColumn.disconnect.confirm.button', extensionName: 'transfusion')}"
+                                    <core:icon identifier="actions-localize"/>
+                                    {f:translate(key: 'languageColumn.disconnect.link', extensionName: 'transfusion')}
                                 </a>
                             </f:if>
                         </div>
