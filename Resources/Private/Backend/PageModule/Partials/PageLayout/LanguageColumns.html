@@ -24,6 +24,34 @@
                         <f:if condition="{languageColumn.context.languageMode}">
                             <span class="badge badge-{languageColumn.context.languageModeLabelClass}">{languageColumn.context.languageMode}</span>
                         </f:if>
+                        <div class="btn-group">
+                            <f:if condition="{allowEditContent} && {languageColumn.context.siteLanguage.languageId} && {languageColumn.translationData.hasTranslations}">
+                                <a href="{transfusion:uri.disconnect(page: languageColumn.context.pageId, language: languageColumn.context.siteLanguage.languageId, language: languageColumn.context.siteLanguage.languageId)}"
+                                   class="btn btn-default btn-sm t3js-modal-trigger"
+                                   title="{f:translate(key: 'LLL:EXT:transfusion/Resources/Private/Language/locallang.xlf:languageColumn.disconnectContent')}"
+                                   data-severity="warning"
+                                   data-title="{f:translate(key: 'languageColumn.disconnect.confirm.title', extensionName: 'transfusion')}"
+                                   data-bs-content="{f:translate(key: 'languageColumn.disconnect.confirm.text', extensionName: 'transfusion')}"
+                                   data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}"
+                                   data-button-ok-text="{f:translate(key: 'languageColumn.disconnect.confirm.button', extensionName: 'transfusion')}">
+                                    <core:icon identifier="actions-localize"/>
+                                    {f:translate(key: 'languageColumn.disconnect.link', extensionName: 'transfusion')}
+                                </a>
+                            </f:if>
+                            <f:if condition="{allowEditContent} && {languageColumn.context.siteLanguage.languageId} && {languageColumn.translationData.hasStandAloneContent}">
+                                <a href="{transfusion:uri.connect(page: languageColumn.context.pageId, language: languageColumn.context.siteLanguage.languageId, language: languageColumn.context.siteLanguage.languageId)}"
+                                   class="btn btn-default btn-sm t3js-modal-trigger"
+                                   title="{f:translate(key: 'LLL:EXT:transfusion/Resources/Private/Language/locallang.xlf:languageColumn.connectContent')}"
+                                   data-severity="warning"
+                                   data-title="{f:translate(key: 'languageColumn.connect.confirm.title', extensionName: 'transfusion')}"
+                                   data-bs-content="{f:translate(key: 'languageColumn.connect.confirm.text', extensionName: 'transfusion')}"
+                                   data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}"
+                                   data-button-ok-text="{f:translate(key: 'languageColumn.connect.confirm.button', extensionName: 'transfusion')}">
+                                    <core:icon identifier="actions-localize"/>
+                                    {f:translate(key: 'languageColumn.connect.link', extensionName: 'transfusion')}
+                                </a>
+                            </f:if>
+                        </div>
                     </td>
                 </f:for>
             </tr>
@@ -54,19 +82,6 @@
                                    data-language-name="{languageColumn.context.siteLanguage.title}">
                                     <core:icon identifier="actions-localize" />
                                     {languageColumn.translatePageTitle}
-                                </a>
-                            </f:if>
-                            <f:if condition="{allowEditContent} && {languageColumn.context.siteLanguage.languageId} && {languageColumn.translationData.hasTranslations} && {languageColumn.translationData.mode} != 'free'">
-                                <a href="{transfusion:uri.disconnect(page: languageColumn.context.pageId, language: languageColumn.context.siteLanguage.languageId, language: languageColumn.context.siteLanguage.languageId)}"
-                                   class="btn btn-default btn-sm t3js-modal-trigger"
-                                   title="{f:translate(key: 'LLL:EXT:transfusion/Resources/Private/Language/locallang.xlf:languageColumn.disconnectContent')}"
-                                   data-severity="warning"
-                                   data-title="{f:translate(key: 'languageColumn.disconnect.confirm.title', extensionName: 'transfusion')}"
-                                   data-bs-content="{f:translate(key: 'languageColumn.disconnect.confirm.text', extensionName: 'transfusion')}"
-                                   data-button-close-text="{f:translate(key:'LLL:EXT:core/Resources/Private/Language/locallang_common.xlf:cancel')}"
-                                   data-button-ok-text="{f:translate(key: 'languageColumn.disconnect.confirm.button', extensionName: 'transfusion')}"
-                                    <core:icon identifier="actions-localize"/>
-                                    {f:translate(key: 'languageColumn.disconnect.link', extensionName: 'transfusion')}
                                 </a>
                             </f:if>
                         </div>

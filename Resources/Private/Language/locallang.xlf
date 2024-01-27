@@ -9,17 +9,27 @@
             <trans-unit id="languageColumn.disconnect.link">
                 <source>Disconnect</source>
             </trans-unit>
-
             <trans-unit id="languageColumn.disconnect.confirm.title">
                 <source>Disconnect translated content elements</source>
             </trans-unit>
-
             <trans-unit id="languageColumn.disconnect.confirm.text">
                 <source>This action will remove any link between the original content elements and their translations for that specific language on that particular page. The result will be a language column with content in free mode.</source>
             </trans-unit>
-
             <trans-unit id="languageColumn.disconnect.confirm.button">
                 <source>Disconnect</source>
+            </trans-unit>
+
+            <trans-unit id="languageColumn.connect.link">
+                <source>Connect</source>
+            </trans-unit>
+            <trans-unit id="languageColumn.connect.confirm.title">
+                <source>Connect translated content elements</source>
+            </trans-unit>
+            <trans-unit id="languageColumn.connect.confirm.text">
+                <source>This action will establish links between the original content elements and their translations for that specific language on that particular page. The result will be a language column with content in connected mode.</source>
+            </trans-unit>
+            <trans-unit id="languageColumn.connect.confirm.button">
+                <source>Connect</source>
             </trans-unit>
         </body>
     </file>
