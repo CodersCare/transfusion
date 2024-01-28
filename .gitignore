@@ -1,0 +1,44 @@
+#
+# Ignore temporary files (left by editors and OS)
+*~
+*.bak
+*.swp
+.DS_Store
+#
+# Ignore by common IDEs used directories/files
+nbproject
+*.idea
+*.project
+*.vscode
+.buildpath
+.settings
+.TemporaryItems
+.webprj
+.fleet
+#
+# Temporary files and folders
+/.cache
+.php_cs.cache
+.php-cs-fixer.cache
+.sass-cache
+.session
+*.log
+#
+# Ignore build stuff
+/.ddev/*
+/Build/.cache
+/Build/phpunit/FunctionalTests-Job-*
+/Build/bower_components/*
+/Build/node_modules/*
+/Build/JavaScript
+/Build/ckeditorLocales
+!/Build/typings/no-def*
+/Build/testing-docker/local/.env
+/Build/testing-docker/local/macos_passwd
+/typo3/sysext/*/Resources/Private/TypeScript/*.js
+/typo3/sysext/*/Resources/Public/JavaScript/*.js.map
+/typo3/sysext/core/Tests/AcceptanceTests-Job-*
+#
+# TypeScript stuff
+.baseDir.ts
+.tscache

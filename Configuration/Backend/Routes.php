@@ -1,16 +1,16 @@
 <?php
 
-use T3thi\Transfusion\Controller;
+use T3thi\Transfusion\Controller\TransfusionController;
 
 return [
-        'language_connect' => [
-                'path' => '/language/connect',
+        'transfusion_connect' => [
+                'path' => '/transfusion/connect',
                 'access' => 'private',
-                'target' => Controller\TransfusionController::class . '::connectAction',
+                'target' => TransfusionController::class . '::connectAction',
         ],
-        'language_disconnect' => [
-                'path' => '/language/disconnect',
+        'transfusion_disconnect' => [
+                'path' => '/transfusion/disconnect',
                 'access' => 'private',
-                'target' => Controller\TransfusionController::class . '::disconnectAction',
+                'target' => TransfusionController::class . '::disconnectAction',
         ],
 ];

@@ -81,7 +81,7 @@ final class DisconnectViewHelper extends AbstractViewHelper
                 'redirect' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-        return (string)$uriBuilder->buildUriFromRoute('language_disconnect', $params);
+        return (string)$uriBuilder->buildUriFromRoute('transfusion_disconnect', $params);
     }
 
     public function initializeArguments(): void
