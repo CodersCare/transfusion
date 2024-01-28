@@ -26,11 +26,6 @@ class TransfusionController
     protected array $dataMap = [];
     protected DataHandler $dataHandler;
     protected bool $missingInformation = false;
-    protected string $languageField;
-    protected string $translationParent;
-    protected string $translationSource;
-    protected string $origUid;
-
     public function __construct()
     {
         $this->pageRenderer = GeneralUtility::makeInstance(PageRenderer::class);
@@ -51,8 +46,8 @@ class TransfusionController
                     foreach ($disconnections as $language => $tables) {
                         if (!empty($tables)) {
                             foreach ($tables as $table) {
-                                $this->checkTranslationFields($table, 'connect');
-                                $this->fetchDisconnectedRecordsAndPrepareDataMap($table, $language, $page);
+                                $transFusionFields = $this->checkTranslationFields($table, 'connect');
+                                $this->fetchDisconnectedRecordsAndPrepareDataMap($table, $language, $page, $transFusionFields);
                             }
                         }
                     }
@@ -66,8 +61,6 @@ class TransfusionController
                 return new RedirectResponse(GeneralUtility::locationHeaderUrl($queryParams['redirect']), 303);
             }
         }
-
-        DebugUtility::debug($this->dataMap);
 
         return $this->pageRenderer->renderResponse();
     }
@@ -86,8 +79,8 @@ class TransfusionController
                     foreach ($disconnections as $language => $tables) {
                         if (!empty($tables)) {
                             foreach ($tables as $table) {
-                                $this->checkTranslationFields($table, 'disconnect');
-                                $this->fetchConnectedRecordsAndPrepareDataMap($table, $language, $page);
+                                $transFusionFields = $this->checkTranslationFields($table, 'disconnect');
+                                $this->fetchConnectedRecordsAndPrepareDataMap($table, $language, $page, $transFusionFields);
                             }
                         }
                     }
@@ -108,9 +101,10 @@ class TransfusionController
      * @param string $table
      * @param int $language
      * @param int $page
+     * @param array $transFusionFields
      * @throws Exception
      */
-    protected function fetchConnectedRecordsAndPrepareDataMap(string $table, int $language, int $page): void
+    protected function fetchConnectedRecordsAndPrepareDataMap(string $table, int $language, int $page, array $transFusionFields): void
     {
         $this->dataMap[$table] = [];
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
@@ -119,18 +113,18 @@ class TransfusionController
                 ->removeAll()
                 ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $connectedRecords = $queryBuilder
-                ->select('uid',$this->translationSource,$this->origUid)
+                ->select('uid',$transFusionFields['source'],$transFusionFields['original'])
                 ->from($table)
                 ->where(
                         $queryBuilder->expr()->eq('pid', $page),
-                        $queryBuilder->expr()->eq($this->languageField, $language),
-                        $queryBuilder->expr()->gt($this->translationParent, 0)
+                        $queryBuilder->expr()->eq($transFusionFields['language'], $language),
+                        $queryBuilder->expr()->gt($transFusionFields['parent'], 0)
                 )
                 ->executeQuery();
         while ($record = $connectedRecords->fetchAssociative()) {
-            $this->dataMap[$table][$record['uid']][$this->translationParent] = 0;
-            if (empty($record[$this->translationSource])) {
-                $this->dataMap[$table][$record['uid']][$this->translationSource] = $record[$this->origUid];
+            $this->dataMap[$table][$record['uid']][$transFusionFields['parent']] = 0;
+            if (empty($record[$transFusionFields['source']])) {
+                $this->dataMap[$table][$record['uid']][$transFusionFields['source']] = $record[$transFusionFields['original']];
             }
         }
     }
@@ -139,10 +133,11 @@ class TransfusionController
      * @param string $table
      * @param int $language
      * @param int $page
-     * @return bool
+     * @param array $transFusionFields
+     * @return void
      * @throws Exception
      */
-    protected function fetchDisconnectedRecordsAndPrepareDataMap(string $table, int $language, int $page): void
+    protected function fetchDisconnectedRecordsAndPrepareDataMap(string $table, int $language, int $page, array $transFusionFields): void
     {
         $this->dataMap[$table] = [];
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
@@ -151,23 +146,23 @@ class TransfusionController
                 ->removeAll()
                 ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $connectedRecords = $queryBuilder
-                ->select('uid',$this->translationSource,$this->origUid)
+                ->select('uid',$transFusionFields['source'],$transFusionFields['original'])
                 ->from($table)
                 ->where(
                         $queryBuilder->expr()->eq('pid', $page),
-                        $queryBuilder->expr()->eq($this->languageField, $language),
-                        $queryBuilder->expr()->eq($this->translationParent, 0)
+                        $queryBuilder->expr()->eq($transFusionFields['language'], $language),
+                        $queryBuilder->expr()->eq($transFusionFields['parent'], 0)
                 )
                 ->executeQuery();
         while ($record = $connectedRecords->fetchAssociative()) {
             if (
-                !empty($record[$this->translationSource])
-                && !empty($record[$this->origUid])
-                && $record[$this->translationSource] === $record[$this->origUid]
+                !empty($record[$transFusionFields['source']])
+                && !empty($record[$transFusionFields['original']])
+                && $record[$transFusionFields['source']] === $record[$transFusionFields['original']]
             ) {
-                $originalRecord = BackendUtility::getRecord($table, $record[$this->origUid], '*');
+                $originalRecord = BackendUtility::getRecord($table, $record[$transFusionFields['original']], '*');
                 if (empty($originalRecord['sys_language_uid'])) {
-                    $this->dataMap[$table][$record['uid']][$this->translationParent] = $record[$this->origUid];
+                    $this->dataMap[$table][$record['uid']][$transFusionFields['parent']] = $record[$transFusionFields['original']];
                 } else {
                     $this->missingInformation = true;
             }
@@ -175,12 +170,18 @@ class TransfusionController
                 $this->missingInformation = true;
             }
             if ($this->missingInformation) {
-                DebugUtility::debug($record);
+                // DebugUtility::debug($record);
             }
         }
     }
 
-    protected function checkTranslationFields(string $table, string $action) {
+    /**
+     * @param string $table
+     * @param string $action
+     * @return array
+     */
+    protected function checkTranslationFields(string $table, string $action): array {
+        $transFusionFields  = [];
         $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'];
         $translationParent = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'];
         $translationSource = $GLOBALS['TCA'][$table]['ctrl']['translationSource'];
@@ -209,10 +210,12 @@ class TransfusionController
                     1706372241
             );
         }
-        $this->languageField = $languageField;
-        $this->translationParent = $translationParent;
-        $this->translationSource = $translationSource;
-        $this->origUid = $origUid;
+        $transFusionFields['language'] = $languageField;
+        $transFusionFields['parent'] = $translationParent;
+        $transFusionFields['source'] = $translationSource;
+        $transFusionFields['original'] = $origUid;
+        
+        return $transFusionFields;
     }
 
     /**
