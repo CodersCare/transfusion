@@ -1,26 +1,32 @@
 <f:debug>{_all}</f:debug>
 
-<f:for each="{defaultLanguageRecords}" as="page">
-    <f:for each="{page}" as="table">
-        <table style="border-right: 1px solid black; border-bottom: 1px solid black;">
-            <thead>
-                <tr><th>Original Record</th><th>Matched Connection</th><th>Possible Connection</th></tr>
-            </thead>
-            <tbody>
-                <f:for each="{table}" as="record">
-                    <tr>
-                        <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                            {record.uid}
-                        </td>
-                        <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                            {record.matchedConnection}
-                        </td>
-                        <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                            {record.possibleConnection}
-                        </td>
-                    </tr>
-                </f:for>
-            </tbody>
-        </table>
-    </f:for>
+<f:for each="{defaultLanguageRecords}" as="table">
+    <table style="border-right: 1px solid black; border-bottom: 1px solid black;">
+        <thead>
+            <tr>
+                <th>Original Record</th>
+                <th>Existing Connection</th>
+                <th>Matched Connection</th>
+                <th>Possible Connection</th>
+            </tr>
+        </thead>
+        <tbody>
+            <f:for each="{table}" as="record">
+                <tr>
+                    <td style="border-left: 1px solid black; border-top: 1px solid black;">
+                        {record.uid}
+                    </td>
+                    <td style="border-left: 1px solid black; border-top: 1px solid black;">
+                        {record.existingConnection}
+                    </td>
+                    <td style="border-left: 1px solid black; border-top: 1px solid black;">
+                        {record.matchedConnection}
+                    </td>
+                    <td style="border-left: 1px solid black; border-top: 1px solid black;">
+                        {record.possibleConnection}
+                    </td>
+                </tr>
+            </f:for>
+        </tbody>
+    </table>
 </f:for>

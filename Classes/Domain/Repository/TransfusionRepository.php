@@ -36,12 +36,11 @@ class TransfusionRepository
         if (!empty($connect)) {
             foreach ($connect as $page => $connections) {
                 if (!empty($connections)) {
-                    $defaultLanguageRecords[$page] = [];
                     foreach ($connections as $tables) {
                         if (!empty($tables)) {
                             foreach ($tables as $table) {
                                 $transFusionFields = $this->checkTransfusionFields($table, 'connect');
-                                $defaultLanguageRecords[$page][$table] = $this->fetchDefaultLanguageRecordsForTable(
+                                $defaultLanguageRecords[$table] = $this->fetchDefaultLanguageRecordsForTable(
                                     $table,
                                     $page,
                                     $transFusionFields,
@@ -125,11 +124,7 @@ class TransfusionRepository
             ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $defaultLanguageQuery = $queryBuilder
             ->select(
-                'uid',
-                $transFusionFields['language'],
-                $transFusionFields['parent'],
-                $transFusionFields['source'],
-                $transFusionFields['original']
+                '*'
             )
             ->from($table)
             ->where(
@@ -140,19 +135,27 @@ class TransfusionRepository
             ->orderBy($transFusionFields['sorting'])
             ->executeQuery();
         while ($record = $defaultLanguageQuery->fetchAssociative()) {
+            $preparedRecord = [
+                'uid' => $record['uid'],
+                $transFusionFields['language'] => $record[$transFusionFields['language']],
+                $transFusionFields['parent'] => $record[$transFusionFields['parent']],
+                $transFusionFields['source'] => $record[$transFusionFields['source']],
+                $transFusionFields['original'] => $record[$transFusionFields['original']],
+                'previewData' => $record
+            ];
             foreach ($fullDataMap[$table] as $dataMapRecord) {
                 if (
-                    $dataMapRecord[$transFusionFields['original']] === $record['uid']
+                    $dataMapRecord[$transFusionFields['original']] === $preparedRecord['uid']
                 ) {
-                    $record['matchedConnection'] = $dataMapRecord['uid'];
+                    $preparedRecord['matchedConnection'] = $dataMapRecord['uid'];
                 } elseif (
                     !empty($dataMapRecord['possibleParent'])
-                    && $dataMapRecord['possibleParent']['uid'] === $record['uid']
+                    && $dataMapRecord['possibleParent']['uid'] === $preparedRecord['uid']
                 ) {
-                    $record['possibleConnection'] = $dataMapRecord['possibleParent']['translation'];
+                    $preparedRecord['possibleConnection'] = $dataMapRecord['possibleParent']['translation'];
                 }
             }
-            $defaultLanguageRecords[] = $record;
+            $defaultLanguageRecords[$preparedRecord['uid']] = $preparedRecord;
         }
         return $defaultLanguageRecords;
     }
@@ -222,11 +225,7 @@ class TransfusionRepository
             ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
         $disconnectedRecords = $queryBuilder
             ->select(
-                'uid',
-                $transFusionFields['language'],
-                $transFusionFields['parent'],
-                $transFusionFields['source'],
-                $transFusionFields['original']
+                '*'
             )
             ->from($table)
             ->where(
@@ -236,32 +235,40 @@ class TransfusionRepository
             ->executeQuery();
         while ($record = $disconnectedRecords->fetchAssociative()) {
             $fetchPossibleParents = false;
+            $preparedRecord = [
+                'uid' => $record['uid'],
+                $transFusionFields['language'] => $record[$transFusionFields['language']],
+                $transFusionFields['parent'] => $record[$transFusionFields['parent']],
+                $transFusionFields['source'] => $record[$transFusionFields['source']],
+                $transFusionFields['original'] => $record[$transFusionFields['original']],
+                'previewData' => $record
+            ];
             if (
-                !empty($record[$transFusionFields['parent']])
+                !empty($preparedRecord[$transFusionFields['parent']])
             ) {
                 $originalRecord = BackendUtility::getRecord(
                     $table,
-                    $record[$transFusionFields['parent']],
+                    $preparedRecord[$transFusionFields['parent']],
                     $transFusionFields['language']
                 );
                 if (empty($originalRecord[$transFusionFields['language']])) {
-                    $dataMap[$record['uid']][$transFusionFields['parent']] = $record[$transFusionFields['parent']];
+                    $dataMap[$preparedRecord['uid']][$transFusionFields['parent']] = $preparedRecord[$transFusionFields['parent']];
                 } else {
                     $fetchPossibleParents = true;
                     $missingInformation = true;
                 }
             } elseif (
-                !empty($record[$transFusionFields['source']])
-                && !empty($record[$transFusionFields['original']])
-                && $record[$transFusionFields['source']] === $record[$transFusionFields['original']]
+                !empty($preparedRecord[$transFusionFields['source']])
+                && !empty($preparedRecord[$transFusionFields['original']])
+                && $preparedRecord[$transFusionFields['source']] === $preparedRecord[$transFusionFields['original']]
             ) {
                 $originalRecord = BackendUtility::getRecord(
                     $table,
-                    $record[$transFusionFields['original']],
+                    $preparedRecord[$transFusionFields['original']],
                     $transFusionFields['language']
                 );
                 if (empty($originalRecord[$transFusionFields['language']])) {
-                    $dataMap[$record['uid']][$transFusionFields['parent']] = $record[$transFusionFields['original']];
+                    $dataMap[$preparedRecord['uid']][$transFusionFields['parent']] = $preparedRecord[$transFusionFields['original']];
                 } else {
                     $fetchPossibleParents = true;
                     $missingInformation = true;
@@ -270,18 +277,18 @@ class TransfusionRepository
                 $fetchPossibleParents = true;
                 $missingInformation = true;
             }
-            $fullDataMap[$table][$record['uid']] = $record;
+            $fullDataMap[$table][$preparedRecord['uid']] = $preparedRecord;
             if ($fetchPossibleParents) {
                 $possibleParentRecord = BackendUtility::getRecord(
                     $table,
-                    $record[$transFusionFields['source']],
+                    $preparedRecord[$transFusionFields['source']],
                     $transFusionFields['original'] . ',uid'
                 );
                 if (!empty($possibleParentRecord)) {
                     if (empty($possibleParentRecord[$transFusionFields['language']])) {
-                        $fullDataMap[$table][$record['uid']]['possibleParent'] = [
+                        $fullDataMap[$table][$preparedRecord['uid']]['possibleParent'] = [
                             'uid' => $possibleParentRecord[$transFusionFields['original']],
-                            'translation' => $record['uid']
+                            'translation' => $preparedRecord['uid']
                         ];
                     }
                 }
@@ -291,6 +298,33 @@ class TransfusionRepository
             'dataMap' => $dataMap,
             'missingInformation' => $missingInformation
         ];
+    }
+
+    public function fetchPreviewRecords(array $previewDataIds)
+    {
+        $previewRecords = [];
+        foreach ($previewDataIds as $table => $ids) {
+            if (empty($ids)) {
+                continue;
+            }
+            $idList = implode(',', array_keys($ids));
+            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
+            $queryBuilder
+                ->getRestrictions()
+                ->removeAll()
+                ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+            $previewRecords[$table] = $queryBuilder
+                ->select(
+                    '*',
+                )
+                ->from($table)
+                ->where(
+                    $queryBuilder->expr()->in('uid', $idList)
+                )
+                ->executeQuery()
+                ->fetchAllAssociativeIndexed();
+        }
+        return $previewRecords;
     }
 
 }
