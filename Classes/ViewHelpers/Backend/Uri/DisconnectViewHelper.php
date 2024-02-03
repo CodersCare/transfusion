@@ -44,11 +44,10 @@ final class DisconnectViewHelper extends AbstractViewHelper
      * @throws RouteNotFoundException
      */
     public static function renderStatic(
-        array                     $arguments,
-        Closure                   $renderChildrenClosure,
+        array $arguments,
+        Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
-    ): string
-    {
+    ): string {
         if ($arguments['page'] < 1) {
             throw new InvalidArgumentException(
                 'Page must be a positive integer, ' . $arguments['page'] . ' given.',
@@ -79,7 +78,7 @@ final class DisconnectViewHelper extends AbstractViewHelper
         }
 
         $params = [
-            'disconnect' => [$arguments['page'] => [$arguments['language'] => $arguments['tables']]],
+            'disconnect' => ['page' => $arguments['page'], 'language' => $arguments['language'], 'table' => $arguments['tables']],
             'redirect' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);

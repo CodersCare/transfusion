@@ -59,11 +59,10 @@ trait SiteBasedTestTrait
      */
     protected function writeSiteConfiguration(
         string $identifier,
-        array  $site = [],
-        array  $languages = [],
-        array  $errorHandling = []
-    ): void
-    {
+        array $site = [],
+        array $languages = [],
+        array $errorHandling = []
+    ): void {
         $configuration = $site;
         if (!empty($languages)) {
             $configuration['languages'] = $languages;
@@ -91,9 +90,8 @@ trait SiteBasedTestTrait
      */
     protected function mergeSiteConfiguration(
         string $identifier,
-        array  $overrides
-    ): void
-    {
+        array $overrides
+    ): void {
         $siteConfiguration = new SiteConfiguration(
             $this->instancePath . '/typo3conf/sites/',
             $this->get('cache.core')
@@ -113,10 +111,9 @@ trait SiteBasedTestTrait
      * @return array
      */
     protected function buildSiteConfiguration(
-        int    $rootPageId,
+        int $rootPageId,
         string $base = ''
-    ): array
-    {
+    ): array {
         return [
             'rootPageId' => $rootPageId,
             'base' => $base,
@@ -131,8 +128,7 @@ trait SiteBasedTestTrait
     protected function buildDefaultLanguageConfiguration(
         string $identifier,
         string $base
-    ): array
-    {
+    ): array {
         $configuration = $this->buildLanguageConfiguration($identifier, $base);
         $configuration['typo3Language'] = 'default';
         $configuration['flag'] = 'global';
@@ -150,10 +146,9 @@ trait SiteBasedTestTrait
     protected function buildLanguageConfiguration(
         string $identifier,
         string $base,
-        array  $fallbackIdentifiers = [],
+        array $fallbackIdentifiers = [],
         string $fallbackType = null
-    ): array
-    {
+    ): array {
         $preset = $this->resolveLanguagePreset($identifier);
 
         $configuration = [
@@ -207,9 +202,8 @@ trait SiteBasedTestTrait
      */
     protected function buildErrorHandlingConfiguration(
         string $handler,
-        array  $codes
-    ): array
-    {
+        array $codes
+    ): array {
         if ($handler === 'Page') {
             // This implies you cannot test both 404 and 403 in the same test.
             // Fixing that requires much deeper changes to the testing harness,

@@ -26,33 +26,104 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class TransfusionRepository
 {
     /**
-     * @param array $connect
+     * @param array $tables
+     * @param int $language
+     * @param int $page
+     * @param array $fullDataMap
+     * @return array
+     * @throws Exception
+     */
+    public function fetchDefaultLanguageRecords(array $tables, int $language, int $page, array $fullDataMap): array
+    {
+        $defaultLanguageRecords = [];
+
+        foreach ($tables as $table) {
+            $defaultLanguageRecords[$table] = $this->fetchDefaultLanguageRecordsForTable(
+                $table,
+                $language,
+                $page,
+                'connect',
+                $fullDataMap,
+            );
+        }
+
+        return $defaultLanguageRecords;
+
+    }
+
+    /**
+     * @param string $table
+     * @param int $page
+     * @param string $action
      * @param array $fullDataMap
      * @param int $language
      * @return array
      * @throws Exception
      */
-    public function fetchDefaultLanguageRecords(array $connect, array $fullDataMap, int $language): array
-    {
+    protected function fetchDefaultLanguageRecordsForTable(
+        string $table,
+        int $language,
+        int $page,
+        string $action,
+        array $fullDataMap,
+    ): array {
         $defaultLanguageRecords = [];
-        if (!empty($connect)) {
-            foreach ($connect as $page => $connections) {
-                if (!empty($connections)) {
-                    foreach ($connections as $tables) {
-                        if (!empty($tables)) {
-                            foreach ($tables as $table) {
-                                $defaultLanguageRecords[$table] = $this->fetchDefaultLanguageRecordsForTable(
-                                    $table,
-                                    $page,
-                                    'connect',
-                                    $fullDataMap,
-                                    $language
-                                );
-                            }
-                        }
-                    }
+        $transFusionFields = $this->checkTransfusionFields($table, $action);
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
+        $queryBuilder
+            ->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+        $defaultLanguageQuery = $queryBuilder
+            ->select(
+                '*'
+            )
+            ->from($table)
+            ->where(
+                $queryBuilder->expr()->eq('pid', $page),
+                $queryBuilder->expr()->eq($transFusionFields['language'], 0),
+                $queryBuilder->expr()->eq($transFusionFields['parent'], 0)
+            )
+            ->orderBy($transFusionFields['sorting'])
+            ->executeQuery();
+        while ($record = $defaultLanguageQuery->fetchAssociative()) {
+            $preparedRecord = [
+                'uid' => $record['uid'],
+                $transFusionFields['language'] => $record[$transFusionFields['language']],
+                $transFusionFields['parent'] => $record[$transFusionFields['parent']],
+                $transFusionFields['source'] => $record[$transFusionFields['source']],
+                $transFusionFields['original'] => $record[$transFusionFields['original']],
+                'previewData' => $record
+            ];
+            $connectedRecord = $this->getConnectedTranslation(
+                $table,
+                $record['uid'],
+                $language,
+                $transFusionFields
+            );
+            if (!empty($connectedRecord)) {
+                $preparedRecord['existingConnection'] = $connectedRecord['uid'];
+                $preparedRecord['existingConnectionPreviewData'] = $connectedRecord;
+            }
+            foreach ($fullDataMap[$table] as $dataMapRecord) {
+                if (
+                    $dataMapRecord[$transFusionFields['original']] === $preparedRecord['uid']
+                    && (
+                        empty($preparedRecord['existingConnection'])
+                        || $preparedRecord['existingConnection'] !== $dataMapRecord['uid']
+                    )
+                ) {
+                    $preparedRecord['matchedConnection'] = $dataMapRecord['uid'];
+                    $preparedRecord['matchedConnectionPreviewData'] = $dataMapRecord['previewData'];
+                } elseif (
+                    !empty($dataMapRecord['possibleParent'])
+                    && $dataMapRecord['possibleParent']['uid'] === $preparedRecord['uid']
+                ) {
+                    $preparedRecord['possibleConnection'] = $dataMapRecord['possibleParent']['translation'];
+                    $preparedRecord['possibleConnectionPreviewData'] = $dataMapRecord['previewData'];
                 }
             }
+            $defaultLanguageRecords[$preparedRecord['uid']] = $preparedRecord;
         }
         return $defaultLanguageRecords;
     }
@@ -62,7 +133,7 @@ class TransfusionRepository
      * @param string $action
      * @return array
      */
-    public function checkTransfusionFields(string $table, string $action): array
+    protected function checkTransfusionFields(string $table, string $action): array
     {
         $transFusionFields = [];
         $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'];
@@ -105,82 +176,6 @@ class TransfusionRepository
 
     /**
      * @param string $table
-     * @param int $page
-     * @param string $action
-     * @param array $fullDataMap
-     * @param int $language
-     * @return array
-     * @throws Exception
-     */
-    protected function fetchDefaultLanguageRecordsForTable(
-        string $table,
-        int    $page,
-        string  $action,
-        array  $fullDataMap,
-        int    $language
-    ): array
-    {
-        $defaultLanguageRecords = [];
-        $transFusionFields = $this->checkTransfusionFields($table, $action);
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
-        $queryBuilder
-            ->getRestrictions()
-            ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
-        $defaultLanguageQuery = $queryBuilder
-            ->select(
-                '*'
-            )
-            ->from($table)
-            ->where(
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($page, Connection::PARAM_INT)),
-                $queryBuilder->expr()->eq($transFusionFields['language'], 0),
-                $queryBuilder->expr()->eq($transFusionFields['parent'], 0)
-            )
-            ->orderBy($transFusionFields['sorting'])
-            ->executeQuery();
-        while ($record = $defaultLanguageQuery->fetchAssociative()) {
-            $preparedRecord = [
-                'uid' => $record['uid'],
-                $transFusionFields['language'] => $record[$transFusionFields['language']],
-                $transFusionFields['parent'] => $record[$transFusionFields['parent']],
-                $transFusionFields['source'] => $record[$transFusionFields['source']],
-                $transFusionFields['original'] => $record[$transFusionFields['original']],
-                'previewData' => $record
-            ];
-            $connectedRecord = $this->getConnectedTranslation(
-                $table,
-                $record['uid'],
-                $language,
-                $transFusionFields
-            );
-            if (!empty($connectedRecord)) {
-                $preparedRecord['existingConnection'] = $connectedRecord['uid'];
-                $preparedRecord['existingConnectionPreviewData'] = $connectedRecord;
-            }
-            foreach ($fullDataMap[$table] as $dataMapRecord) {
-                if (
-                    $dataMapRecord[$transFusionFields['original']] === $preparedRecord['uid']
-                    && (
-                        empty($preparedRecord['existingConnection'])
-                        || $preparedRecord['existingConnection'] !== $dataMapRecord['uid']
-                    )
-                ) {
-                    $preparedRecord['matchedConnection'] = $dataMapRecord['uid'];
-                } elseif (
-                    !empty($dataMapRecord['possibleParent'])
-                    && $dataMapRecord['possibleParent']['uid'] === $preparedRecord['uid']
-                ) {
-                    $preparedRecord['possibleConnection'] = $dataMapRecord['possibleParent']['translation'];
-                }
-            }
-            $defaultLanguageRecords[$preparedRecord['uid']] = $preparedRecord;
-        }
-        return $defaultLanguageRecords;
-    }
-
-    /**
-     * @param string $table
      * @param int $uid
      * @param int $language
      * @param array $transfusionFields
@@ -195,7 +190,7 @@ class TransfusionRepository
             ->removeAll()
             ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
 
-        return  $queryBuilder
+        return $queryBuilder
             ->select('*')
             ->from($table)
             ->where(
@@ -222,11 +217,10 @@ class TransfusionRepository
      */
     public function fetchConnectedRecordsAndPrepareDataMap(
         string $table,
-        int    $language,
-        int    $page,
-        string  $action
-    ): array
-    {
+        int $language,
+        int $page,
+        string $action
+    ): array {
         $dataMap = [];
         $transFusionFields = $this->checkTransfusionFields(
             $table,
@@ -266,12 +260,11 @@ class TransfusionRepository
      */
     public function fetchDisconnectedRecordsAndPrepareDataMap(
         string $table,
-        int    $language,
-        int    $page,
-        string  $action,
-        array  &$fullDataMap
-    ): array
-    {
+        int $language,
+        int $page,
+        string $action,
+        array &$fullDataMap
+    ): array {
         $dataMap = [];
         $missingInformation = false;
         $transFusionFields = $this->checkTransfusionFields(
@@ -360,35 +353,4 @@ class TransfusionRepository
         ];
     }
 
-    /**
-     * @param array $previewDataIds
-     * @return array
-     * @throws Exception
-     */
-    public function fetchPreviewRecords(array $previewDataIds): array
-    {
-        $previewRecords = [];
-        foreach ($previewDataIds as $table => $ids) {
-            if (empty($ids)) {
-                continue;
-            }
-            $idList = implode(',', array_keys($ids));
-            $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
-            $queryBuilder
-                ->getRestrictions()
-                ->removeAll()
-                ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
-            $previewRecords[$table] = $queryBuilder
-                ->select(
-                    '*',
-                )
-                ->from($table)
-                ->where(
-                    $queryBuilder->expr()->in('uid', $idList)
-                )
-                ->executeQuery()
-                ->fetchAllAssociativeIndexed();
-        }
-        return $previewRecords;
-    }
 }

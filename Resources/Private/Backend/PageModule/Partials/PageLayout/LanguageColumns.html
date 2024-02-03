@@ -26,7 +26,7 @@
                         </f:if>
                         <div class="btn-group">
                             <f:if condition="{allowEditContent} && {languageColumn.context.siteLanguage.languageId} && {languageColumn.translationData.hasTranslations}">
-                                <a href="{transfusion:uri.disconnect(page: languageColumn.context.pageId, language: languageColumn.context.siteLanguage.languageId, language: languageColumn.context.siteLanguage.languageId)}"
+                                <a href="{transfusion:uri.disconnect(page: languageColumn.context.pageId, language: languageColumn.context.siteLanguage.languageId)}"
                                    class="btn btn-default btn-sm t3js-modal-trigger"
                                    title="{f:translate(key: 'LLL:EXT:transfusion/Resources/Private/Language/locallang.xlf:languageColumn.disconnectContent')}"
                                    data-severity="warning"
@@ -39,7 +39,7 @@
                                 </a>
                             </f:if>
                             <f:if condition="{allowEditContent} && {languageColumn.context.siteLanguage.languageId} && {languageColumn.translationData.hasStandAloneContent}">
-                                <a href="{transfusion:uri.connect(page: languageColumn.context.pageId, language: languageColumn.context.siteLanguage.languageId, language: languageColumn.context.siteLanguage.languageId)}"
+                                <a href="{transfusion:uri.connect(page: languageColumn.context.pageId, language: languageColumn.context.siteLanguage.languageId)}"
                                    class="btn btn-default btn-sm t3js-modal-trigger"
                                    title="{f:translate(key: 'LLL:EXT:transfusion/Resources/Private/Language/locallang.xlf:languageColumn.connectContent')}"
                                    data-severity="warning"

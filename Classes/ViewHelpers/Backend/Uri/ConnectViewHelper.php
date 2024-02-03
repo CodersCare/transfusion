@@ -28,7 +28,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
- * ViewHelper to create links for the disconnection of a single language column on a given page
+ * ViewHelper to create links for the connection of a single language column on a given page
  *
  * It needs the IDs of the page and the language as well as a table to be disconnected
  * Default currently is tt_content only - more tables will be supported in the future
@@ -44,11 +44,10 @@ final class ConnectViewHelper extends AbstractViewHelper
      * @throws RouteNotFoundException
      */
     public static function renderStatic(
-        array                     $arguments,
-        Closure                   $renderChildrenClosure,
+        array $arguments,
+        Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
-    ): string
-    {
+    ): string {
         if ($arguments['page'] < 1) {
             throw new InvalidArgumentException(
                 'Page must be a positive integer, ' . $arguments['page'] . ' given.',
@@ -79,7 +78,7 @@ final class ConnectViewHelper extends AbstractViewHelper
         }
 
         $params = [
-            'connect' => [$arguments['page'] => [$arguments['language'] => $arguments['tables']]],
+            'connect' => ['page' => $arguments['page'], 'language' => $arguments['language'], 'tables' => $arguments['tables']],
             'redirect' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);

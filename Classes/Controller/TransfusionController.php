@@ -42,31 +42,34 @@ class TransfusionController
      */
     public function connectAction(ServerRequestInterface $request): ResponseInterface
     {
+        $queryParams = $request->getQueryParams();
+
+        if (
+            empty($queryParams['connect']['page'])
+            || empty($queryParams['connect']['language'])
+            || empty($queryParams['connect']['tables'])
+        ) {
+            return new Response();
+        }
+
         $missingInformation = false;
         $moduleTemplate = $this->moduleTemplateFactory->create($request);
 
-        $queryParams = $request->getQueryParams();
-        if (!empty($queryParams['connect'])) {
-            foreach ($queryParams['connect'] as $page => $connections) {
-                if (!empty($connections)) {
-                    foreach ($connections as $language => $tables) {
-                        if (!empty($tables)) {
-                            foreach ($tables as $table) {
-                                $disconnectMapper = $this->transfusionRepository->fetchDisconnectedRecordsAndPrepareDataMap(
-                                    $table,
-                                    $language,
-                                    $page,
-                                    'connect',
-                                    $this->fullDataMap,
-                                );
-                                $this->dataMap[$table] = $disconnectMapper['dataMap'] ?? [];
-                                if ($disconnectMapper['missingInformation']) {
-                                    $missingInformation = true;
-                                }
-                            }
-                        }
-                    }
-                }
+        $tables = $queryParams['connect']['tables'];
+        $language = (int)$queryParams['connect']['language'];
+        $page = (int)$queryParams['connect']['page'];
+
+        foreach ($tables as $table) {
+            $disconnectMapper = $this->transfusionRepository->fetchDisconnectedRecordsAndPrepareDataMap(
+                $table,
+                $language,
+                $page,
+                'connect',
+                $this->fullDataMap,
+            );
+            $this->dataMap[$table] = $disconnectMapper['dataMap'] ?? [];
+            if ($disconnectMapper['missingInformation']) {
+                $missingInformation = true;
             }
         }
 
@@ -76,9 +79,10 @@ class TransfusionController
                     'connect' => $queryParams['connect'],
                     'fullDataMap' => $this->fullDataMap,
                     'defaultLanguageRecords' => $this->transfusionRepository->fetchDefaultLanguageRecords(
-                        $queryParams['connect'],
-                        $this->fullDataMap,
-                        $language
+                        $tables,
+                        $language,
+                        $page,
+                        $this->fullDataMap
                     )
                 ]
             );
@@ -92,6 +96,7 @@ class TransfusionController
         }
 
         return new Response();
+
     }
 
     protected function executeDataHandler(): void
@@ -109,21 +114,24 @@ class TransfusionController
     {
         $moduleTemplate = $this->moduleTemplateFactory->create($request);
         $queryParams = $request->getQueryParams();
-        if (!empty($queryParams['disconnect'])) {
-            foreach ($queryParams['disconnect'] as $page => $disconnections) {
-                if (!empty($disconnections)) {
-                    foreach ($disconnections as $language => $tables) {
-                        if (!empty($tables)) {
-                            foreach ($tables as $table) {
-                                $this->dataMap[$table] = $this->transfusionRepository->fetchConnectedRecordsAndPrepareDataMap(
-                                    $table,
-                                    $language,
-                                    $page,
-                                    'disconnect'
-                                );
-                            }
-                        }
-                    }
+
+        if (
+            !empty($queryParams['disconnect']['page'])
+            && !empty($queryParams['disconnect']['language'])
+            && !empty($queryParams['disconnect']['tables'])
+        ) {
+            $tables = $queryParams['connect']['tables'];
+            $language = (int)$queryParams['disconnect']['language'];
+            $page = (int)$queryParams['disconnect']['page'];
+
+            if (!empty($tables)) {
+                foreach ($tables as $table) {
+                    $this->dataMap[$table] = $this->transfusionRepository->fetchConnectedRecordsAndPrepareDataMap(
+                        $table,
+                        $language,
+                        $page,
+                        'disconnect'
+                    );
                 }
             }
         }

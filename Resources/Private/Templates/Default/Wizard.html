@@ -14,16 +14,16 @@
             <f:for each="{table}" as="record">
                 <tr>
                     <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                        {record.uid}
+                        {record.uid} {record.previewData.header}
                     </td>
                     <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                        {record.existingConnection}
+                        {record.existingConnection} {record.existingConnectionPreviewData.header}
                     </td>
                     <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                        {record.matchedConnection}
+                        {record.matchedConnection} {record.matchedConnectionPreviewData.header}
                     </td>
                     <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                        {record.possibleConnection}
+                        {record.possibleConnection} {record.possibleConnectionPreviewData.header}
                     </td>
                 </tr>
             </f:for>
