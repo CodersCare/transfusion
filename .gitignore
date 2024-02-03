@@ -20,12 +20,20 @@ nbproject
 /.cache
 .php_cs.cache
 .php-cs-fixer.cache
+.phpunit.result.cache
 .sass-cache
 .session
 *.log
 #
 # Ignore build stuff
 /.ddev/*
+.Build
+/composer.lock
+/public
+/var
+/Build/testing-docker/local/.env
+/Build/testing-docker/.env
+/Build/phpunit/.phpunit.result.cache
 /Build/.cache
 /Build/phpunit/FunctionalTests-Job-*
 /Build/bower_components/*
@@ -33,7 +41,6 @@ nbproject
 /Build/JavaScript
 /Build/ckeditorLocales
 !/Build/typings/no-def*
-/Build/testing-docker/local/.env
 /Build/testing-docker/local/macos_passwd
 /typo3/sysext/*/Resources/Private/TypeScript/*.js
 /typo3/sysext/*/Resources/Public/JavaScript/*.js.map

@@ -97,9 +97,6 @@ class TransfusionController
         return new Response();
     }
 
-    /**
-     * @return void
-     */
     protected function executeDataHandler(): void
     {
         $this->dataHandler->start($this->dataMap, []);
@@ -142,9 +139,9 @@ class TransfusionController
 
         if (!empty($queryParams['redirect'])) {
             return new RedirectResponse(GeneralUtility::locationHeaderUrl($queryParams['redirect']), 303);
-        } else {
-            return $moduleTemplate->renderResponse();
         }
+        return $moduleTemplate->renderResponse();
+
     }
 
 }

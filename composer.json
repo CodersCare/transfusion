@@ -8,14 +8,54 @@
     "require": {
         "typo3/cms-core": "^12.4"
     },
+	"require-dev": {
+		"ergebnis/composer-normalize": "*",
+		"friendsofphp/php-cs-fixer": "*",
+		"saschaegerer/phpstan-typo3": "*",
+		"ssch/typo3-rector": "*",
+		"mockery/mockery": "*",
+		"phpspec/prophecy-phpunit": "*",
+		"typo3/cms-impexp": "*",
+		"typo3/minimal": "*",
+		"typo3/testing-framework": "*"
+	},
     "autoload": {
         "psr-4": {
             "T3thi\\Transfusion\\": "Classes/"
         }
     },
+	"autoload-dev": {
+		"psr-4": {
+			"T3thi\\Transfusion\\Tests\\": "Tests/"
+		},
+		"classmap": [
+			"Tests/Functional/Fixtures/"
+		]
+	},
+	"config": {
+		"allow-plugins": {
+            "cweagans/composer-patches": true,
+            "ergebnis/composer-normalize": true,
+            "typo3/class-alias-loader": true,
+            "typo3/cms-composer-installers": true,
+            "captainhook/plugin-composer": false
+        },
+		"bin-dir": ".Build/bin",
+		"vendor-dir": ".Build/vendor"
+	},
     "extra": {
-        "typo3/cms": {
-            "extension-key": "transfusion"
-        }
-    }
+		"typo3/cms": {
+			"cms-package-dir": "{$vendor-dir}/typo3/cms",
+			"extension-key": "transfusion",
+			"web-dir": ".Build/Web"
+		}
+    },
+	"scripts": {
+		"ci": [
+			"@php-cs-fixer",
+			"@phpstan"
+		],
+		"php-cs-fixer": ".Build/bin/php-cs-fixer fix --config=.php-cs-fixer.php --dry-run --stop-on-violation --using-cache=no -v . > coding-style-errors.log",
+		"phpstan": ".Build/bin/phpstan analyse > phpstan-errors.log"
+	}
 }

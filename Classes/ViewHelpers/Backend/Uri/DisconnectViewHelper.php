@@ -44,19 +44,21 @@ final class DisconnectViewHelper extends AbstractViewHelper
      * @throws RouteNotFoundException
      */
     public static function renderStatic(
-            array $arguments,
-            Closure $renderChildrenClosure,
-            RenderingContextInterface $renderingContext
-    ): string {
+        array                     $arguments,
+        Closure                   $renderChildrenClosure,
+        RenderingContextInterface $renderingContext
+    ): string
+    {
         if ($arguments['page'] < 1) {
             throw new InvalidArgumentException(
-                    'Page must be a positive integer, ' . $arguments['page'] . ' given.',
-                    1706372241
+                'Page must be a positive integer, ' . $arguments['page'] . ' given.',
+                1706372241
             );
         }
         if ($arguments['language'] < 1) {
             throw new InvalidArgumentException(
-                    'Language must be a positive integer, ' . $arguments['language'] . ' given.', 1706372241
+                'Language must be a positive integer, ' . $arguments['language'] . ' given.',
+                1706372241
             );
         }
         if (empty($arguments['tables'])) {
@@ -65,8 +67,8 @@ final class DisconnectViewHelper extends AbstractViewHelper
         foreach ($arguments['tables'] as $table) {
             if (empty($GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'])) {
                 throw new InvalidArgumentException(
-                        'Table must be translatable and provide a transOrigPointerField to be connected. This table can\'t be disconnected',
-                        1706372241
+                    'Table must be translatable and provide a transOrigPointerField to be connected. This table can\'t be disconnected',
+                    1706372241
                 );
             }
         }
@@ -77,8 +79,8 @@ final class DisconnectViewHelper extends AbstractViewHelper
         }
 
         $params = [
-                'disconnect' => [$arguments['page'] => [$arguments['language'] => $arguments['tables']]],
-                'redirect' => $arguments['returnUrl'],
+            'disconnect' => [$arguments['page'] => [$arguments['language'] => $arguments['tables']]],
+            'redirect' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         return (string)$uriBuilder->buildUriFromRoute('transfusion_disconnect', $params);
