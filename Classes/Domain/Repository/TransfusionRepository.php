@@ -7,6 +7,7 @@ namespace T3thi\Transfusion\Domain\Repository;
 use Doctrine\DBAL\Exception;
 use InvalidArgumentException;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -27,10 +28,11 @@ class TransfusionRepository
     /**
      * @param array $connect
      * @param array $fullDataMap
+     * @param int $language
      * @return array
      * @throws Exception
      */
-    public function fetchDefaultLanguageRecords(array $connect, array $fullDataMap): array
+    public function fetchDefaultLanguageRecords(array $connect, array $fullDataMap, int $language): array
     {
         $defaultLanguageRecords = [];
         if (!empty($connect)) {
@@ -39,12 +41,12 @@ class TransfusionRepository
                     foreach ($connections as $tables) {
                         if (!empty($tables)) {
                             foreach ($tables as $table) {
-                                $transFusionFields = $this->checkTransfusionFields($table, 'connect');
                                 $defaultLanguageRecords[$table] = $this->fetchDefaultLanguageRecordsForTable(
                                     $table,
                                     $page,
-                                    $transFusionFields,
-                                    $fullDataMap
+                                    'connect',
+                                    $fullDataMap,
+                                    $language
                                 );
                             }
                         }
@@ -104,19 +106,22 @@ class TransfusionRepository
     /**
      * @param string $table
      * @param int $page
-     * @param array $transFusionFields
+     * @param string $action
      * @param array $fullDataMap
+     * @param int $language
      * @return array
      * @throws Exception
      */
     protected function fetchDefaultLanguageRecordsForTable(
         string $table,
         int    $page,
-        array  $transFusionFields,
-        array  $fullDataMap
+        string  $action,
+        array  $fullDataMap,
+        int    $language
     ): array
     {
         $defaultLanguageRecords = [];
+        $transFusionFields = $this->checkTransfusionFields($table, $action);
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
         $queryBuilder
             ->getRestrictions()
@@ -128,7 +133,7 @@ class TransfusionRepository
             )
             ->from($table)
             ->where(
-                $queryBuilder->expr()->eq('pid', $page),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($page, Connection::PARAM_INT)),
                 $queryBuilder->expr()->eq($transFusionFields['language'], 0),
                 $queryBuilder->expr()->eq($transFusionFields['parent'], 0)
             )
@@ -143,9 +148,23 @@ class TransfusionRepository
                 $transFusionFields['original'] => $record[$transFusionFields['original']],
                 'previewData' => $record
             ];
+            $connectedRecord = $this->getConnectedTranslation(
+                $table,
+                $record['uid'],
+                $language,
+                $transFusionFields
+            );
+            if (!empty($connectedRecord)) {
+                $preparedRecord['existingConnection'] = $connectedRecord['uid'];
+                $preparedRecord['existingConnectionPreviewData'] = $connectedRecord;
+            }
             foreach ($fullDataMap[$table] as $dataMapRecord) {
                 if (
                     $dataMapRecord[$transFusionFields['original']] === $preparedRecord['uid']
+                    && (
+                        empty($preparedRecord['existingConnection'])
+                        || $preparedRecord['existingConnection'] !== $dataMapRecord['uid']
+                    )
                 ) {
                     $preparedRecord['matchedConnection'] = $dataMapRecord['uid'];
                 } elseif (
@@ -162,9 +181,42 @@ class TransfusionRepository
 
     /**
      * @param string $table
+     * @param int $uid
+     * @param int $language
+     * @param array $transfusionFields
+     * @return array|false
+     * @throws Exception
+     */
+    protected function getConnectedTranslation(string $table, int $uid, int $language, array $transfusionFields): array|false
+    {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
+            ->getQueryBuilderForTable($table);
+        $queryBuilder->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+
+        return  $queryBuilder
+            ->select('*')
+            ->from($table)
+            ->where(
+                $queryBuilder->expr()->eq(
+                    $transfusionFields['parent'],
+                    $queryBuilder->createNamedParameter($uid, Connection::PARAM_INT)
+                ),
+                $queryBuilder->expr()->eq(
+                    $transfusionFields['language'],
+                    $queryBuilder->createNamedParameter($language, Connection::PARAM_INT)
+                )
+            )
+            ->executeQuery()
+            ->fetchAssociative();
+    }
+
+    /**
+     * @param string $table
      * @param int $language
      * @param int $page
-     * @param array $transFusionFields
+     * @param string $action
      * @return array
      * @throws Exception
      */
@@ -172,10 +224,14 @@ class TransfusionRepository
         string $table,
         int    $language,
         int    $page,
-        array  $transFusionFields
+        string  $action
     ): array
     {
         $dataMap = [];
+        $transFusionFields = $this->checkTransfusionFields(
+            $table,
+            'disconnect'
+        );
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
         $queryBuilder
             ->getRestrictions()
@@ -185,8 +241,8 @@ class TransfusionRepository
             ->select('uid', $transFusionFields['source'], $transFusionFields['original'])
             ->from($table)
             ->where(
-                $queryBuilder->expr()->eq('pid', $page),
-                $queryBuilder->expr()->eq($transFusionFields['language'], $language),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($page, Connection::PARAM_INT)),
+                $queryBuilder->expr()->eq($transFusionFields['language'], $queryBuilder->createNamedParameter($language, Connection::PARAM_INT)),
                 $queryBuilder->expr()->gt($transFusionFields['parent'], 0)
             )
             ->executeQuery();
@@ -203,7 +259,7 @@ class TransfusionRepository
      * @param string $table
      * @param int $language
      * @param int $page
-     * @param array $transFusionFields
+     * @param string $action
      * @param array $fullDataMap
      * @return array
      * @throws Exception
@@ -212,12 +268,16 @@ class TransfusionRepository
         string $table,
         int    $language,
         int    $page,
-        array  $transFusionFields,
+        string  $action,
         array  &$fullDataMap
     ): array
     {
         $dataMap = [];
         $missingInformation = false;
+        $transFusionFields = $this->checkTransfusionFields(
+            $table,
+            $action
+        );
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
         $queryBuilder
             ->getRestrictions()
@@ -229,7 +289,7 @@ class TransfusionRepository
             )
             ->from($table)
             ->where(
-                $queryBuilder->expr()->eq('pid', $page),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($page, Connection::PARAM_INT)),
                 $queryBuilder->expr()->eq($transFusionFields['language'], $language),
             )
             ->executeQuery();
@@ -300,7 +360,12 @@ class TransfusionRepository
         ];
     }
 
-    public function fetchPreviewRecords(array $previewDataIds)
+    /**
+     * @param array $previewDataIds
+     * @return array
+     * @throws Exception
+     */
+    public function fetchPreviewRecords(array $previewDataIds): array
     {
         $previewRecords = [];
         foreach ($previewDataIds as $table => $ids) {
@@ -326,5 +391,4 @@ class TransfusionRepository
         }
         return $previewRecords;
     }
-
 }

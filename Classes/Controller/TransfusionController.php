@@ -52,15 +52,11 @@ class TransfusionController
                     foreach ($connections as $language => $tables) {
                         if (!empty($tables)) {
                             foreach ($tables as $table) {
-                                $transFusionFields = $this->transfusionRepository->checkTransfusionFields(
-                                    $table,
-                                    'connect'
-                                );
                                 $disconnectMapper = $this->transfusionRepository->fetchDisconnectedRecordsAndPrepareDataMap(
                                     $table,
                                     $language,
                                     $page,
-                                    $transFusionFields,
+                                    'connect',
                                     $this->fullDataMap,
                                 );
                                 $this->dataMap[$table] = $disconnectMapper['dataMap'] ?? [];
@@ -81,7 +77,8 @@ class TransfusionController
                     'fullDataMap' => $this->fullDataMap,
                     'defaultLanguageRecords' => $this->transfusionRepository->fetchDefaultLanguageRecords(
                         $queryParams['connect'],
-                        $this->fullDataMap
+                        $this->fullDataMap,
+                        $language
                     )
                 ]
             );
@@ -118,15 +115,11 @@ class TransfusionController
                     foreach ($disconnections as $language => $tables) {
                         if (!empty($tables)) {
                             foreach ($tables as $table) {
-                                $transFusionFields = $this->transfusionRepository->checkTransfusionFields(
-                                    $table,
-                                    'disconnect'
-                                );
                                 $this->dataMap[$table] = $this->transfusionRepository->fetchConnectedRecordsAndPrepareDataMap(
                                     $table,
                                     $language,
                                     $page,
-                                    $transFusionFields
+                                    'disconnect'
                                 );
                             }
                         }
