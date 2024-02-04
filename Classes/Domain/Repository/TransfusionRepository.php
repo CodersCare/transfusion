@@ -10,6 +10,8 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
+use TYPO3\CMS\Core\Imaging\Icon;
+use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -25,6 +27,17 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class TransfusionRepository
 {
+
+    /**
+     * @var IconFactory
+     */
+    protected IconFactory $iconFactory;
+
+    public function __construct()
+    {
+        $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+    }
+
     /**
      * @param array $tables
      * @param int $language
@@ -93,6 +106,7 @@ class TransfusionRepository
                 $transFusionFields['parent'] => $record[$transFusionFields['parent']],
                 $transFusionFields['source'] => $record[$transFusionFields['source']],
                 $transFusionFields['original'] => $record[$transFusionFields['original']],
+                'icon' => $this->getIconForRecord($table, $record),
                 'previewData' => $record
             ];
             $connectedRecord = $this->getConnectedTranslation(
@@ -102,30 +116,52 @@ class TransfusionRepository
                 $transFusionFields
             );
             if (!empty($connectedRecord)) {
-                $preparedRecord['existingConnection'] = $connectedRecord['uid'];
-                $preparedRecord['existingConnectionPreviewData'] = $connectedRecord;
+                $preparedRecord['existingConnection'] = [
+                    'uid' => $connectedRecord['uid'],
+                    'icon' => $this->getIconForRecord($table, $connectedRecord),
+                    'previewData' => $connectedRecord
+                ];
             }
             foreach ($fullDataMap[$table] as $dataMapRecord) {
                 if (
                     $dataMapRecord[$transFusionFields['original']] === $preparedRecord['uid']
                     && (
                         empty($preparedRecord['existingConnection'])
-                        || $preparedRecord['existingConnection'] !== $dataMapRecord['uid']
+                        || $preparedRecord['existingConnection']['uid'] !== $dataMapRecord['uid']
                     )
                 ) {
-                    $preparedRecord['matchedConnection'] = $dataMapRecord['uid'];
-                    $preparedRecord['matchedConnectionPreviewData'] = $dataMapRecord['previewData'];
+                    $preparedRecord['matchedConnection'] = [
+                        'uid' => $dataMapRecord['uid'],
+                        'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
+                        'previewData' =>$dataMapRecord['previewData']
+                    ];
                 } elseif (
                     !empty($dataMapRecord['possibleParent'])
                     && $dataMapRecord['possibleParent']['uid'] === $preparedRecord['uid']
                 ) {
-                    $preparedRecord['possibleConnection'] = $dataMapRecord['possibleParent']['translation'];
-                    $preparedRecord['possibleConnectionPreviewData'] = $dataMapRecord['previewData'];
+                    $preparedRecord['possibleConnection'] = [
+                        'uid' => $dataMapRecord['possibleParent']['translation'],
+                        'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
+                        'previewData' => $dataMapRecord['previewData']
+                    ];
                 }
             }
             $defaultLanguageRecords[$preparedRecord['uid']] = $preparedRecord;
         }
         return $defaultLanguageRecords;
+    }
+
+    /**
+     * @param string $table
+     * @param array $record
+     * @return string
+     */
+    protected function getIconForRecord(string $table, array $record): string
+    {
+        return $this->iconFactory
+            ->getIconForRecord($table, $record, Icon::SIZE_SMALL)
+            ->setTitle(BackendUtility::getRecordIconAltText($record, $table))
+            ->render();
     }
 
     /**

@@ -77,6 +77,7 @@ class TransfusionController
             $moduleTemplate->assignMultiple(
                 [
                     'connect' => $queryParams['connect'],
+                    'returnUrl' => $queryParams['returnUrl'] ?? '',
                     'fullDataMap' => $this->fullDataMap,
                     'defaultLanguageRecords' => $this->transfusionRepository->fetchDefaultLanguageRecords(
                         $tables,
@@ -86,13 +87,15 @@ class TransfusionController
                     )
                 ]
             );
+            $moduleTemplate->setModuleClass('module  module-transfusion-connector');
+            $moduleTemplate->setModuleId('transfusion-connector-' . $page . '-' . $language);
             return $moduleTemplate->renderResponse('Wizard');
         }
 
         $this->executeDataHandler();
 
-        if (!empty($queryParams['redirect'])) {
-            return new RedirectResponse(GeneralUtility::locationHeaderUrl($queryParams['redirect']), 303);
+        if (!empty($queryParams['returnUrl'])) {
+            return new RedirectResponse(GeneralUtility::locationHeaderUrl($queryParams['returnUrl']), 303);
         }
 
         return new Response();
@@ -138,8 +141,8 @@ class TransfusionController
 
         $this->executeDataHandler();
 
-        if (!empty($queryParams['redirect'])) {
-            return new RedirectResponse(GeneralUtility::locationHeaderUrl($queryParams['redirect']), 303);
+        if (!empty($queryParams['returnUrl'])) {
+            return new RedirectResponse(GeneralUtility::locationHeaderUrl($queryParams['returnUrl']), 303);
         }
         return $moduleTemplate->renderResponse();
 

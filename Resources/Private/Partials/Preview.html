@@ -1,0 +1,20 @@
+<f:if condition="{record.uid}">
+    <div class="t3-page-ce-wrapper">
+        <div class="t3-page-ce" id="element-{table}-{record.uid}" data-table="{table}" data-uid="{record.uid}">
+            <div class="t3-page-ce-element">
+                <div class="t3-page-ce-header">
+                    <div class="t3-page-ce-header-left">
+                        <f:format.raw>{record.icon}</f:format.raw>
+                    </div>
+                    <div class="t3-page-ce-header-title">
+                        {record.previewData.header}
+                    </div>
+                    <div class="t3-page-ce-header-right">
+                        <div class="btn-toolbar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</f:if>

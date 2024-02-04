@@ -79,7 +79,7 @@ final class ConnectViewHelper extends AbstractViewHelper
 
         $params = [
             'connect' => ['page' => $arguments['page'], 'language' => $arguments['language'], 'tables' => $arguments['tables']],
-            'redirect' => $arguments['returnUrl'],
+            'returnUrl' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
         return (string)$uriBuilder->buildUriFromRoute('transfusion_connect', $params);

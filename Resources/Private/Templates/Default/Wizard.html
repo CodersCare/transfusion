@@ -1,32 +1,87 @@
-<f:debug>{_all}</f:debug>
+<div class="{moduleClass}" data-module-id="{moduleId}" data-module-name="{moduleName}">
+    <div class="module-loading-indicator"></div>
+    <div class="module-docheader t3js-module-docheader">
+        <div
+            class="module-docheader-bar module-docheader-bar-navigation t3js-module-docheader-bar t3js-module-docheader-bar-navigation">
+            <div class="module-docheader-bar-column-left">
+                <div class="module-docheader-bar-container">
+                    <div class="form-group form-group-sm">
+                    </div>
+                </div>
+            </div>
+            <div class="module-docheader-bar-column-right">
+            </div>
+        </div>
+        <div
+            class="module-docheader-bar module-docheader-bar-buttons t3js-module-docheader-bar t3js-module-docheader-bar-buttons">
+            <div class="module-docheader-bar-column-left">
+                <div class="btn-toolbar" role="toolbar" aria-label="">
+                </div>
+            </div>
+            <div class="module-docheader-bar-column-right">
+                <div class="btn-toolbar" role="toolbar" aria-label="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="module-body t3js-module-body">
+        <h1>TransFusion Connector</h1>
+        <form action="{transfusion:uri.connect(page: connect.page, language: connect.language, returnUrl: returnUrl)}"
+              id="TransfusionController" method="post">
+            <div class="form-row">
+                <div class="form-group">
+                </div>
+            </div>
 
-<f:for each="{defaultLanguageRecords}" as="table">
-    <table style="border-right: 1px solid black; border-bottom: 1px solid black;">
-        <thead>
-            <tr>
-                <th>Original Record</th>
-                <th>Existing Connection</th>
-                <th>Matched Connection</th>
-                <th>Possible Connection</th>
-            </tr>
-        </thead>
-        <tbody>
-            <f:for each="{table}" as="record">
-                <tr>
-                    <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                        {record.uid} {record.previewData.header}
-                    </td>
-                    <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                        {record.existingConnection} {record.existingConnectionPreviewData.header}
-                    </td>
-                    <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                        {record.matchedConnection} {record.matchedConnectionPreviewData.header}
-                    </td>
-                    <td style="border-left: 1px solid black; border-top: 1px solid black;">
-                        {record.possibleConnection} {record.possibleConnectionPreviewData.header}
-                    </td>
-                </tr>
-            </f:for>
-        </tbody>
-    </table>
-</f:for>
+            <div class="t3-grid-container" data-default-language-binding="0">
+                <div class="t3-grid-container-inner">
+                    <f:for each="{defaultLanguageRecords}" as="records" key="table">
+                        <table class="t3-grid-table">
+                            <thead>
+                            <tr>
+                                <th class="transfusion-original">
+                                    <h2>Original Record</h2>
+                                    <p>Mandatory for translations in connected mode</p>
+                                </th>
+                                <th class="transfusion-existing">
+                                    <h2>Existing Connection</h2>
+                                    <p>These records are already properly connected to the default language</p>
+                                </th>
+                                <th class="transfusion-matched">
+                                    <h2>Matched Connection</h2>
+                                    <p>These records could be directly matched to the default language</p>
+                                </th>
+                                <th class="transfusion-possible">
+                                    <h2>Possible Connection</h2>
+                                    <p>These records might be matched to the default language based on their source</p>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <f:for each="{records}" as="record">
+                                <tr>
+                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-original">
+                                        <f:render partial="Preview" arguments="{table: table, record: record}"/>
+                                    </td>
+                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-existing">
+                                        <f:render partial="Preview"
+                                                  arguments="{table: table, record: record.existingConnection}"/>
+                                    </td>
+                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-matched">
+                                        <f:render partial="Preview"
+                                                  arguments="{table: table, record: record.matchedConnection}"/>
+                                    </td>
+                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-possible">
+                                        <f:render partial="Preview"
+                                                  arguments="{table: table, record: record.possibleConnection}"/>
+                                    </td>
+                                </tr>
+                            </f:for>
+                            </tbody>
+                        </table>
+                    </f:for>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -7,3 +7,5 @@ defined('TYPO3') or die();
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['transfusion'] = [
         'T3thi\Transfusion\ViewHelpers\Backend',
 ];
+
+$GLOBALS['TYPO3_CONF_VARS']['BE']['stylesheets']['transfusion'] = 'EXT:transfusion/Resources/Public/Css/transfusion-backend.css';
