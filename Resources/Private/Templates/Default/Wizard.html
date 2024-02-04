@@ -61,19 +61,19 @@
                             <f:for each="{records}" as="record">
                                 <tr>
                                     <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-original">
-                                        <f:render partial="Preview" arguments="{table: table, record: record}"/>
+                                        <f:render partial="Preview" arguments="{table: table, record: record, interaction: 'false'}"/>
                                     </td>
                                     <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-existing">
                                         <f:render partial="Preview"
-                                                  arguments="{table: table, record: record.existingConnection}"/>
+                                                  arguments="{table: table, record: record.existingConnection, interaction: 'false'}"/>
                                     </td>
                                     <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-matched">
                                         <f:render partial="Preview"
-                                                  arguments="{table: table, record: record.matchedConnection}"/>
+                                                  arguments="{table: table, record: record.matchedConnection, interaction: 'true'}"/>
                                     </td>
                                     <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-possible">
                                         <f:render partial="Preview"
-                                                  arguments="{table: table, record: record.possibleConnection}"/>
+                                                  arguments="{table: table, record: record.possibleConnection, interaction: 'true'}"/>
                                     </td>
                                 </tr>
                             </f:for>

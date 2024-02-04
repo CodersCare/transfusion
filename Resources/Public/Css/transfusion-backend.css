@@ -65,3 +65,19 @@
 .module-transfusion-connector .t3-grid-table .t3-page-ce-element {
     margin-bottom: 0;
 }
+
+.module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .t3-page-ce-header-left * {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .t3-page-ce-header-left .btn-selector {
+    margin-right: 1em;
+}
+
+.module-transfusion-connector .t3-grid-table .transfusion-existing .t3-page-ce-header-left .btn-selector,
+.module-transfusion-connector .t3-grid-table .transfusion-matched .t3-page-ce-header-right .btn-selector,
+.module-transfusion-connector .t3-grid-table .transfusion-possible .t3-page-ce-header-right .btn-selector {
+    display: none;
+}
+
