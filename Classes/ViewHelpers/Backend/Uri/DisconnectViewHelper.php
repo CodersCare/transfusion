@@ -78,7 +78,7 @@ final class DisconnectViewHelper extends AbstractViewHelper
         }
 
         $params = [
-            'disconnect' => ['page' => $arguments['page'], 'language' => $arguments['language'], 'table' => $arguments['tables']],
+            'disconnect' => ['page' => $arguments['page'], 'language' => $arguments['language'], 'tables' => $arguments['tables']],
             'returnUrl' => $arguments['returnUrl'],
         ];
         $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);

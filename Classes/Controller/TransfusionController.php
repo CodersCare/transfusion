@@ -13,6 +13,7 @@ use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -73,7 +74,7 @@ class TransfusionController
             }
         }
 
-        if ($missingInformation) {
+        if ($missingInformation || 1 === 1) {
             $moduleTemplate->assignMultiple(
                 [
                     'connect' => $queryParams['connect'],
@@ -118,12 +119,13 @@ class TransfusionController
         $moduleTemplate = $this->moduleTemplateFactory->create($request);
         $queryParams = $request->getQueryParams();
 
+        DebugUtility::debug($queryParams);
         if (
             !empty($queryParams['disconnect']['page'])
             && !empty($queryParams['disconnect']['language'])
             && !empty($queryParams['disconnect']['tables'])
         ) {
-            $tables = $queryParams['connect']['tables'];
+            $tables = $queryParams['disconnect']['tables'];
             $language = (int)$queryParams['disconnect']['language'];
             $page = (int)$queryParams['disconnect']['page'];
 

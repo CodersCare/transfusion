@@ -7,7 +7,14 @@
                     <div class="t3-page-ce-header-left">
                         <f:if condition="{interaction}=='true'">
                             <button class="btn btn-default btn-selector">
-                                <core:icon title="Select" identifier="actions-chevron-left" />
+                                <f:if condition="{status}=='possible'">
+                                    <f:then>
+                                        <core:icon title="Move to existing connections" identifier="actions-chevron-double-left" />
+                                    </f:then>
+                                    <f:else>
+                                        <core:icon title="Move to existing connections" identifier="actions-chevron-left" />
+                                    </f:else>
+                                </f:if>
                             </button>
                         </f:if>
                         <f:format.raw>{record.icon}</f:format.raw>
@@ -18,7 +25,14 @@
                     <f:if condition="{interaction}=='true'">
                         <div class="t3-page-ce-header-right">
                             <button class="btn btn-default btn-selector">
-                                <core:icon title="Remove" identifier="actions-chevron-right" />
+                                <f:if condition="{status}=='possible'">
+                                    <f:then>
+                                        <core:icon title="Remove from existing connections" identifier="actions-chevron-double-right" />
+                                    </f:then>
+                                    <f:else>
+                                        <core:icon title="Remove from existing connections" identifier="actions-chevron-right" />
+                                    </f:else>
+                                </f:if>
                             </button>
                         </div>
                     </f:if>

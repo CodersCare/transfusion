@@ -38,42 +38,38 @@
                     <f:for each="{defaultLanguageRecords}" as="records" key="table">
                         <table class="t3-grid-table">
                             <thead>
-                            <tr>
-                                <th class="transfusion-original">
-                                    <h2>Original Record</h2>
-                                    <p>Mandatory for translations in connected mode</p>
-                                </th>
-                                <th class="transfusion-existing">
-                                    <h2>Existing Connection</h2>
-                                    <p>These records are already properly connected to the default language</p>
-                                </th>
-                                <th class="transfusion-matched">
-                                    <h2>Matched Connection</h2>
-                                    <p>These records could be directly matched to the default language</p>
-                                </th>
-                                <th class="transfusion-possible">
-                                    <h2>Possible Connection</h2>
-                                    <p>These records might be matched to the default language based on their source</p>
-                                </th>
-                            </tr>
+                                <tr>
+                                    <th class="transfusion-original">
+                                        <h2>Original Record <core:icon title="Mandatory for translations in connected mode" identifier="actions-question-circle" /></h2>
+                                    </th>
+                                    <th class="transfusion-existing">
+                                        <h2>Existing Connection <core:icon title="These records are already properly connected or selected and will be stored when saving" identifier="actions-question-circle" /></h2>
+                                    </th>
+                                    <th class="transfusion-matched">
+                                        <h2>Matched Connection <core:icon title="These records could be directly matched to the default language" identifier="actions-question-circle" /></h2>
+                                    </th>
+                                    <th class="transfusion-possible">
+                                        <h2>Possible Connection <core:icon title="These records might be matched to the default language based on their source" identifier="actions-question-circle" /></h2>
+                                    </th>
+                                </tr>
                             </thead>
                             <tbody>
                             <f:for each="{records}" as="record">
                                 <tr>
                                     <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-original">
-                                        <f:render partial="Preview" arguments="{table: table, record: record, interaction: 'false'}"/>
+                                        <f:render partial="Preview" arguments="{table: table, record: record, status: 'original', interaction: 'false'}"/>
                                     </td>
                                     <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-existing">
                                         <f:render partial="Preview"
-                                                  arguments="{table: table, record: record.existingConnection, interaction: 'false'}"/>
+                                                  arguments="{table: table, record: record.existingConnection, status: 'existing', interaction: 'false'}"/>
                                     </td>
                                     <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-matched">
                                         <f:render partial="Preview"
-                                                  arguments="{table: table, record: record.matchedConnection, interaction: 'true'}"/>
+                                                  arguments="{table: table, record: record.matchedConnection, status: 'matched', interaction: 'true'}"/>
                                     </td>
                                     <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-possible">
                                         <f:render partial="Preview"
-                                                  arguments="{table: table, record: record.possibleConnection, interaction: 'true'}"/>
+                                                  arguments="{table: table, record: record.possibleConnection, status: 'possible', interaction: 'true'}"/>
                                     </td>
                                 </tr>
                             </f:for>
