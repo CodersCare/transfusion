@@ -6,16 +6,18 @@
                 <div class="t3-page-ce-header">
                     <div class="t3-page-ce-header-left">
                         <f:if condition="{interaction}=='true'">
-                            <button class="btn btn-default btn-selector">
-                                <f:if condition="{status}=='possible'">
-                                    <f:then>
+                            <f:if condition="{status}=='possible'">
+                                <f:then>
+                                    <button class="btn btn-default btn-transfusion-selector" data-direction="left" data-frequency="2">
                                         <core:icon title="Move to confirmed connections" identifier="actions-chevron-double-left" />
-                                    </f:then>
-                                    <f:else>
+                                    </button>
+                                </f:then>
+                                <f:else>
+                                    <button class="btn btn-default btn-transfusion-selector" data-direction="left" data-frequency="1">
                                         <core:icon title="Move to confirmed connections" identifier="actions-chevron-left" />
-                                    </f:else>
-                                </f:if>
-                            </button>
+                                    </button>
+                                </f:else>
+                            </f:if>
                         </f:if>
                         <f:format.raw>{record.icon}</f:format.raw>
                     </div>
@@ -24,16 +26,18 @@
                     </div>
                     <f:if condition="{interaction}=='true'">
                         <div class="t3-page-ce-header-right">
-                            <button class="btn btn-default btn-selector">
-                                <f:if condition="{status}=='possible'">
-                                    <f:then>
+                            <f:if condition="{status}=='possible'">
+                                <f:then>
+                                    <button class="btn btn-default btn-transfusion-selector" data-direction="right" data-frequency="2">
                                         <core:icon title="Remove from confirmed connections" identifier="actions-chevron-double-right" />
-                                    </f:then>
-                                    <f:else>
+                                    </button>
+                                </f:then>
+                                <f:else>
+                                    <button class="btn btn-default btn-transfusion-selector" data-direction="right" data-frequency="1">
                                         <core:icon title="Remove from confirmed connections" identifier="actions-chevron-right" />
-                                    </f:else>
-                                </f:if>
-                            </button>
+                                    </button>
+                                </f:else>
+                            </f:if>
                         </div>
                     </f:if>
                 </div>
