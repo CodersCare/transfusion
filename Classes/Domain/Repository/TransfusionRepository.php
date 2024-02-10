@@ -51,13 +51,16 @@ class TransfusionRepository
         $defaultLanguageRecords = [];
 
         foreach ($tables as $table) {
-            $defaultLanguageRecords[$table] = $this->fetchDefaultLanguageRecordsForTable(
-                $table,
-                $language,
-                $page,
-                'connect',
-                $fullDataMap,
-            );
+            $defaultLanguageRecords[$table] = [
+                'transFusionFields' => $this->checkTransFusionFields($table, ''),
+                'records' => $this->fetchDefaultLanguageRecordsForTable(
+                    $table,
+                    $language,
+                    $page,
+                    'connect',
+                    $fullDataMap,
+                )
+            ];
         }
 
         return $defaultLanguageRecords;
@@ -81,7 +84,7 @@ class TransfusionRepository
         array $fullDataMap,
     ): array {
         $defaultLanguageRecords = [];
-        $transFusionFields = $this->checkTransfusionFields($table, $action);
+        $transFusionFields = $this->checkTransFusionFields($table, $action);
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
         $queryBuilder
             ->getRestrictions()
@@ -169,7 +172,7 @@ class TransfusionRepository
      * @param string $action
      * @return array
      */
-    protected function checkTransfusionFields(string $table, string $action): array
+    public function checkTransFusionFields(string $table, string $action): array
     {
         $transFusionFields = [];
         $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'];
@@ -258,7 +261,7 @@ class TransfusionRepository
         string $action
     ): array {
         $dataMap = [];
-        $transFusionFields = $this->checkTransfusionFields(
+        $transFusionFields = $this->checkTransFusionFields(
             $table,
             'disconnect'
         );
@@ -303,7 +306,7 @@ class TransfusionRepository
     ): array {
         $dataMap = [];
         $missingInformation = false;
-        $transFusionFields = $this->checkTransfusionFields(
+        $transFusionFields = $this->checkTransFusionFields(
             $table,
             $action
         );

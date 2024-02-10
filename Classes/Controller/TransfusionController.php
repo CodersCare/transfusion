@@ -9,10 +9,14 @@ use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use T3thi\Transfusion\Domain\Repository\TransfusionRepository;
+use TYPO3\CMS\Backend\Exception\AccessDeniedException;
 use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Core\Http\RedirectResponse;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -25,11 +29,13 @@ class TransfusionController
     protected ModuleTemplateFactory $moduleTemplateFactory;
     protected IconFactory $iconFactory;
     protected DataHandler $dataHandler;
+    protected BackendUserAuthentication $backendUser;
     protected array $dataMap = [];
     protected array $fullDataMap = [];
 
     public function __construct()
     {
+        $this->backendUser = $this->getBackendUser();
         $this->transfusionRepository = GeneralUtility::makeInstance(TransfusionRepository::class);
         $this->dataHandler = GeneralUtility::makeInstance(DataHandler::class);
         $this->moduleTemplateFactory = GeneralUtility::makeInstance(ModuleTemplateFactory::class);
@@ -39,10 +45,18 @@ class TransfusionController
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      * @throws Exception
+     * @throws AccessDeniedException
      */
     public function connectAction(ServerRequestInterface $request): ResponseInterface
     {
+        $this->checkAccess();
+
         $queryParams = $request->getQueryParams();
+        $this->dataMap = $request->getParsedBody()['dataMap'] ?? [];
+
+        if (!empty($this->dataMap)) {
+            $this->executeDataHandler();
+        }
 
         if (
             empty($queryParams['connect']['page'])
@@ -74,11 +88,17 @@ class TransfusionController
         }
 
         if ($missingInformation) {
+            $moduleTemplate->getDocHeaderComponent()->setMetaInformation(
+                BackendUtility::readPageAccess(
+                    $page,
+                    $this->backendUser->getPagePermsClause(Permission::PAGE_SHOW)
+                )
+            );
             $moduleTemplate->assignMultiple(
                 [
+                    'docHeader' => $moduleTemplate->getDocHeaderComponent()->docHeaderContent(),
                     'connect' => $queryParams['connect'],
                     'returnUrl' => $queryParams['returnUrl'] ?? '',
-                    'fullDataMap' => $this->fullDataMap,
                     'defaultLanguageRecords' => $this->transfusionRepository->fetchDefaultLanguageRecords(
                         $tables,
                         $language,
@@ -102,6 +122,31 @@ class TransfusionController
 
     }
 
+    /**
+     * @return void
+     * @throws AccessDeniedException
+     */
+    protected function checkAccess(): void
+    {
+        if (empty($this->backendUser->loginType)) {
+            throw new AccessDeniedException(
+                'You need to be logged in as a TYPO3 backend user to modify translation connections',
+                1706372241
+            );
+        }
+    }
+
+    /**
+     * @return BackendUserAuthentication
+     */
+    protected function getBackendUser(): BackendUserAuthentication
+    {
+        return $GLOBALS['BE_USER'];
+    }
+
+    /**
+     * @return void
+     */
     protected function executeDataHandler(): void
     {
         $this->dataHandler->start($this->dataMap, []);
@@ -112,9 +157,12 @@ class TransfusionController
      * @param ServerRequestInterface $request
      * @return ResponseInterface
      * @throws Exception
+     * @throws AccessDeniedException
      */
     public function disconnectAction(ServerRequestInterface $request): ResponseInterface
     {
+        $this->checkAccess();
+
         $moduleTemplate = $this->moduleTemplateFactory->create($request);
         $queryParams = $request->getQueryParams();
 
@@ -147,5 +195,4 @@ class TransfusionController
         return $moduleTemplate->renderResponse();
 
     }
-
 }

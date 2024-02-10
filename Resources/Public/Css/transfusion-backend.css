@@ -74,6 +74,10 @@
     margin-bottom: 0;
 }
 
+.module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .t3-page-ce-header-left {
+    align-items: center;
+}
+
 .module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .t3-page-ce-header-left * {
     display: inline-block;
     vertical-align: middle;
