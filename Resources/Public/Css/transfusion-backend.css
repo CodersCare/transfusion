@@ -16,13 +16,13 @@
     border: 1px solid var(--bs-secondary-border-subtle);
 }
 
-.module-transfusion-connector .t3-grid-table th.transfusion-existing {
+.module-transfusion-connector .t3-grid-table th.transfusion-confirmed {
     color:var(--bs-success-text-emphasis);
     background:var(--bs-success-border-subtle);
     border: 1px solid var(--bs-success-border-subtle);
 }
 
-.module-transfusion-connector .t3-grid-table th.transfusion-matched {
+.module-transfusion-connector .t3-grid-table th.transfusion-obvious {
     color:var(--bs-warning-text-emphasis);
     background:var(--bs-warning-border-subtle);
     border: 1px solid var(--bs-warning-border-subtle);
@@ -40,23 +40,23 @@
     border: 1px solid var(--bs-secondary-border-subtle);
 }
 
-.module-transfusion-connector .t3-grid-table td.transfusion-existing {
+.module-transfusion-connector .t3-grid-table td.transfusion-confirmed {
     color:var(--bs-success-text-emphasis);
     background:var(--bs-success-bg-subtle);
     border: 1px solid var(--bs-success-border-subtle);
 }
 
-.module-transfusion-connector .t3-grid-table td.transfusion-existing .btn-selector {
+.module-transfusion-connector .t3-grid-table td.transfusion-confirmed .btn-selector {
     background:var(--bs-success-border-subtle);
 }
 
-.module-transfusion-connector .t3-grid-table td.transfusion-matched {
+.module-transfusion-connector .t3-grid-table td.transfusion-obvious {
     color:var(--bs-warning-text-emphasis);
     background:var(--bs-warning-bg-subtle);
     border: 1px solid var(--bs-warning-border-subtle);
 }
 
-.module-transfusion-connector .t3-grid-table td.transfusion-matched .btn-selector {
+.module-transfusion-connector .t3-grid-table td.transfusion-obvious .btn-selector {
     background:var(--bs-warning-border-subtle);
 }
 
@@ -87,8 +87,8 @@
     margin-right: 1em;
 }
 
-.module-transfusion-connector .t3-grid-table .transfusion-existing .t3-page-ce-header-left .btn-selector,
-.module-transfusion-connector .t3-grid-table .transfusion-matched .t3-page-ce-header-right .btn-selector,
+.module-transfusion-connector .t3-grid-table .transfusion-confirmed .t3-page-ce-header-left .btn-selector,
+.module-transfusion-connector .t3-grid-table .transfusion-obvious .t3-page-ce-header-right .btn-selector,
 .module-transfusion-connector .t3-grid-table .transfusion-possible .t3-page-ce-header-right .btn-selector {
     display: none;
 }

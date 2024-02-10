@@ -116,7 +116,7 @@ class TransfusionRepository
                 $transFusionFields
             );
             if (!empty($connectedRecord)) {
-                $preparedRecord['existingConnection'] = [
+                $preparedRecord['confirmedConnection'] = [
                     'uid' => $connectedRecord['uid'],
                     'icon' => $this->getIconForRecord($table, $connectedRecord),
                     'previewData' => $connectedRecord
@@ -126,11 +126,11 @@ class TransfusionRepository
                 if (
                     $dataMapRecord[$transFusionFields['original']] === $preparedRecord['uid']
                     && (
-                        empty($preparedRecord['existingConnection'])
-                        || $preparedRecord['existingConnection']['uid'] !== $dataMapRecord['uid']
+                        empty($preparedRecord['confirmedConnection'])
+                        || $preparedRecord['confirmedConnection']['uid'] !== $dataMapRecord['uid']
                     )
                 ) {
-                    $preparedRecord['matchedConnection'] = [
+                    $preparedRecord['obviousConnection'] = [
                         'uid' => $dataMapRecord['uid'],
                         'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
                         'previewData' =>$dataMapRecord['previewData']
