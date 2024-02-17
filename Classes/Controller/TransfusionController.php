@@ -66,7 +66,7 @@ class TransfusionController
             return new Response();
         }
 
-        $missingInformation = false;
+        $needsInteraction = false;
         $moduleTemplate = $this->moduleTemplateFactory->create($request);
 
         $tables = $queryParams['connect']['tables'];
@@ -82,12 +82,12 @@ class TransfusionController
                 $this->fullDataMap,
             );
             $this->dataMap[$table] = $disconnectMapper['dataMap'] ?? [];
-            if ($disconnectMapper['missingInformation']) {
-                $missingInformation = true;
+            if ($disconnectMapper['needsInteraction']) {
+                $needsInteraction = true;
             }
         }
 
-        if ($missingInformation) {
+        if ($needsInteraction) {
             $moduleTemplate->getDocHeaderComponent()->setMetaInformation(
                 BackendUtility::readPageAccess(
                     $page,
@@ -123,7 +123,6 @@ class TransfusionController
     }
 
     /**
-     * @return void
      * @throws AccessDeniedException
      */
     protected function checkAccess(): void
@@ -144,9 +143,6 @@ class TransfusionController
         return $GLOBALS['BE_USER'];
     }
 
-    /**
-     * @return void
-     */
     protected function executeDataHandler(): void
     {
         $this->dataHandler->start($this->dataMap, []);

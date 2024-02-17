@@ -105,13 +105,16 @@ class TransfusionRepository
         while ($record = $defaultLanguageQuery->fetchAssociative()) {
             $preparedRecord = [
                 'uid' => $record['uid'],
-                $transFusionFields['language'] => $record[$transFusionFields['language']],
-                $transFusionFields['parent'] => $record[$transFusionFields['parent']],
-                $transFusionFields['source'] => $record[$transFusionFields['source']],
-                $transFusionFields['original'] => $record[$transFusionFields['original']],
+                'type' => $record[$transFusionFields['type']],
+                'sorting' => $record[$transFusionFields['sorting']] + $language,
+                'language' => $record[$transFusionFields['language']],
+                'parent' => $record[$transFusionFields['parent']],
+                'source' => $record[$transFusionFields['source']],
+                'original' => $record[$transFusionFields['original']],
                 'icon' => $this->getIconForRecord($table, $record),
                 'previewData' => $record
             ];
+            $preparedRecord['column'] = ($table === 'tt_content' ? $record[$transFusionFields['column']] : '');
             $connectedRecord = $this->getConnectedTranslation(
                 $table,
                 $record['uid'],
@@ -127,7 +130,7 @@ class TransfusionRepository
             }
             foreach ($fullDataMap[$table] as $dataMapRecord) {
                 if (
-                    $dataMapRecord[$transFusionFields['original']] === $preparedRecord['uid']
+                    $dataMapRecord['original'] === $preparedRecord['uid']
                     && (
                         empty($preparedRecord['confirmedConnection'])
                         || $preparedRecord['confirmedConnection']['uid'] !== $dataMapRecord['uid']
@@ -136,7 +139,7 @@ class TransfusionRepository
                     $preparedRecord['obviousConnection'] = [
                         'uid' => $dataMapRecord['uid'],
                         'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
-                        'previewData' =>$dataMapRecord['previewData']
+                        'previewData' => $dataMapRecord['previewData']
                     ];
                 } elseif (
                     !empty($dataMapRecord['possibleParent'])
@@ -175,6 +178,7 @@ class TransfusionRepository
     public function checkTransFusionFields(string $table, string $action): array
     {
         $transFusionFields = [];
+        $typeField = $GLOBALS['TCA'][$table]['ctrl']['type'] ?? '';
         $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'];
         $translationParent = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'];
         $translationSource = $GLOBALS['TCA'][$table]['ctrl']['translationSource'];
@@ -204,11 +208,16 @@ class TransfusionRepository
                 1706372241
             );
         }
+        $transFusionFields['type'] = $typeField;
         $transFusionFields['language'] = $languageField;
         $transFusionFields['parent'] = $translationParent;
         $transFusionFields['source'] = $translationSource;
         $transFusionFields['original'] = $origUid;
         $transFusionFields['sorting'] = $sortBy;
+
+        if ($table === 'tt_content') {
+            $transFusionFields['column'] = 'colPos';
+        }
 
         return $transFusionFields;
     }
@@ -305,7 +314,7 @@ class TransfusionRepository
         array &$fullDataMap
     ): array {
         $dataMap = [];
-        $missingInformation = false;
+        $needsInteraction = false;
         $transFusionFields = $this->checkTransFusionFields(
             $table,
             $action
@@ -329,55 +338,75 @@ class TransfusionRepository
             $fetchPossibleParents = false;
             $preparedRecord = [
                 'uid' => $record['uid'],
-                $transFusionFields['language'] => $record[$transFusionFields['language']],
-                $transFusionFields['parent'] => $record[$transFusionFields['parent']],
-                $transFusionFields['source'] => $record[$transFusionFields['source']],
-                $transFusionFields['original'] => $record[$transFusionFields['original']],
+                'type' => $record[$transFusionFields['type']],
+                'sorting' => $record[$transFusionFields['sorting']],
+                'language' => $record[$transFusionFields['language']],
+                'parent' => $record[$transFusionFields['parent']],
+                'source' => $record[$transFusionFields['source']],
+                'original' => $record[$transFusionFields['original']],
                 'previewData' => $record
             ];
+            $preparedRecord['column'] = ($table === 'tt_content' ? $record[$transFusionFields['column']] : '');
+
+            $fetchFields = $transFusionFields['language'] . ',' . $transFusionFields['type'] . ',' . $transFusionFields['sorting'];
+
+            if ($table === 'tt_content') {
+                $fetchFields .= ',' . $transFusionFields['column'];
+            }
             if (
-                !empty($preparedRecord[$transFusionFields['parent']])
+                !empty($preparedRecord['parent'])
             ) {
                 $originalRecord = BackendUtility::getRecord(
                     $table,
-                    $preparedRecord[$transFusionFields['parent']],
-                    $transFusionFields['language']
+                    $preparedRecord['parent'],
+                    $fetchFields
                 );
-                if (empty($originalRecord[$transFusionFields['language']])) {
-                    $dataMap[$preparedRecord['uid']][$transFusionFields['parent']] = $preparedRecord[$transFusionFields['parent']];
+                if (
+                    !empty($originalRecord)
+                    && empty($originalRecord[$transFusionFields['language']])
+                    && $originalRecord[$transFusionFields['type']] === $preparedRecord['type']
+                ) {
+                    $dataMap[$preparedRecord['uid']]['parent'] = $preparedRecord['parent'];
                 } else {
+                    $needsInteraction = true;
                     $fetchPossibleParents = true;
-                    $missingInformation = true;
                 }
             } elseif (
-                !empty($preparedRecord[$transFusionFields['source']])
-                && !empty($preparedRecord[$transFusionFields['original']])
-                && $preparedRecord[$transFusionFields['source']] === $preparedRecord[$transFusionFields['original']]
+                !empty($preparedRecord['source'])
+                && !empty($preparedRecord['original'])
+                && $preparedRecord['source'] === $preparedRecord['original']
             ) {
+                $needsInteraction = true;
                 $originalRecord = BackendUtility::getRecord(
                     $table,
-                    $preparedRecord[$transFusionFields['original']],
-                    $transFusionFields['language']
+                    $preparedRecord['original'],
+                    $fetchFields
                 );
-                if (empty($originalRecord[$transFusionFields['language']])) {
-                    $dataMap[$preparedRecord['uid']][$transFusionFields['parent']] = $preparedRecord[$transFusionFields['original']];
+                if (
+                    !empty($originalRecord)
+                    && empty($originalRecord[$transFusionFields['language']])
+                    && $originalRecord[$transFusionFields['type']] === $preparedRecord['type']
+                ) {
+                    $dataMap[$preparedRecord['uid']]['parent'] = $preparedRecord['original'];
                 } else {
                     $fetchPossibleParents = true;
-                    $missingInformation = true;
                 }
             } else {
+                $needsInteraction = true;
                 $fetchPossibleParents = true;
-                $missingInformation = true;
             }
             $fullDataMap[$table][$preparedRecord['uid']] = $preparedRecord;
+            $fetchFields .= ',' . $transFusionFields['original'] . ',uid';
             if ($fetchPossibleParents) {
                 $possibleParentRecord = BackendUtility::getRecord(
                     $table,
-                    $preparedRecord[$transFusionFields['source']],
-                    $transFusionFields['original'] . ',uid'
+                    $preparedRecord['source'],
+                    $fetchFields
                 );
                 if (!empty($possibleParentRecord)) {
-                    if (empty($possibleParentRecord[$transFusionFields['language']])) {
+                    if (
+                        $possibleParentRecord[$transFusionFields['type']] === $preparedRecord['type']
+                    ) {
                         $fullDataMap[$table][$preparedRecord['uid']]['possibleParent'] = [
                             'uid' => $possibleParentRecord[$transFusionFields['original']],
                             'translation' => $preparedRecord['uid']
@@ -388,7 +417,7 @@ class TransfusionRepository
         }
         return [
             'dataMap' => $dataMap,
-            'missingInformation' => $missingInformation
+            'needsInteraction' => $needsInteraction
         ];
     }
 
