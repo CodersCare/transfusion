@@ -7,18 +7,21 @@ class TransfusionConnectorMoveAction {
   constructor() {
     var moveOnceOrTwice = function(event) {
       event.preventDefault();
-      if(typeof this.dataset.direction != "undefined" && typeof this.dataset.frequency != "undefined") {
+      if(typeof this.dataset.direction != "undefined" && typeof this.dataset.status != "undefined") {
         var direction = this.dataset.direction;
-        var frequency = this.dataset.frequency;
+        var status = this.dataset.status;
         var fullElement = this.closest('.t3-page-ce-wrapper');
         var inputElements = fullElement.getElementsByTagName('input');
         var targetCell = null;
         if (direction === 'left') {
-          if (frequency === '1') {
+          if (status === 'obvious') {
             targetCell = fullElement.closest('td').previousElementSibling;
           }
-          if (frequency === '2') {
+          if (status === 'possible') {
             targetCell = fullElement.closest('td').previousElementSibling.previousElementSibling;
+          }
+          if (status === 'broken') {
+            targetCell = fullElement.closest('td').previousElementSibling.previousElementSibling.previousElementSibling;
           }
           if (targetCell !== null) {
             targetCell.append(fullElement);
@@ -28,11 +31,14 @@ class TransfusionConnectorMoveAction {
           }
         }
         if (direction === 'right') {
-          if (frequency === '1') {
+          if (status === 'obvious') {
             targetCell = fullElement.closest('td').nextElementSibling;
           }
-          if (frequency === '2') {
+          if (status === 'possible') {
             targetCell = fullElement.closest('td').nextElementSibling.nextElementSibling;
+          }
+          if (status === 'broken') {
+            targetCell = fullElement.closest('td').nextElementSibling.nextElementSibling.nextElementSibling;
           }
           if (targetCell !== null) {
             targetCell.append(fullElement);

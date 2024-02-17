@@ -39,6 +39,11 @@
                                             arguments="{table: table, record: record.possibleConnection, original: record, status: 'possible', interaction: 'true', transFusionFields: data.transFusionFields}"
                                             partial="Preview"/>
                                     </td>
+                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-broken">
+                                        <f:render
+                                            arguments="{table: table, record: record.brokenConnection, original: record, status: 'broken', interaction: 'true', transFusionFields: data.transFusionFields}"
+                                            partial="Preview"/>
+                                    </td>
                                 </tr>
                             </f:for>
                             </tbody>

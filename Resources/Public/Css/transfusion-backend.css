@@ -30,6 +30,12 @@
     border:1px solid var(--bs-info-border-subtle);
 }
 
+.module-transfusion-connector .t3-grid-table th.transfusion-broken {
+    color:var(--bs-danger-text-emphasis);
+    background:var(--bs-danger-border-subtle);
+    border:1px solid var(--bs-danger-border-subtle);
+}
+
 .module-transfusion-connector .t3-grid-table td.transfusion-original {
     color:var(--bs-secondary-text-emphasis);
     background:var(--bs-secondary-bg-subtle);
@@ -66,6 +72,16 @@
     background:var(--bs-info-border-subtle);
 }
 
+.module-transfusion-connector .t3-grid-table td.transfusion-broken {
+    color:var(--bs-danger-text-emphasis);
+    background:var(--bs-danger-bg-subtle);
+    border:1px solid var(--bs-danger-border-subtle);
+}
+
+.module-transfusion-connector .t3-grid-table td.transfusion-broken .btn-transfusion-selector {
+    background:var(--bs-danger-border-subtle);
+}
+
 .module-transfusion-connector .t3-grid-table .t3-page-ce {
     margin: 0.75rem;
 }
@@ -89,7 +105,8 @@
 
 .module-transfusion-connector .t3-grid-table .transfusion-confirmed .t3-page-ce-header-left .btn-transfusion-selector,
 .module-transfusion-connector .t3-grid-table .transfusion-obvious .t3-page-ce-header-right .btn-transfusion-selector,
-.module-transfusion-connector .t3-grid-table .transfusion-possible .t3-page-ce-header-right .btn-transfusion-selector {
+.module-transfusion-connector .t3-grid-table .transfusion-possible .t3-page-ce-header-right .btn-transfusion-selector,
+.module-transfusion-connector .t3-grid-table .transfusion-broken .t3-page-ce-header-right .btn-transfusion-selector {
     display: none;
 }
 
