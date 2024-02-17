@@ -106,7 +106,6 @@ class TransfusionRepository
             $preparedRecord = [
                 'uid' => $record['uid'],
                 'type' => $record[$transFusionFields['type']],
-                'sorting' => $record[$transFusionFields['sorting']] + $language,
                 'language' => $record[$transFusionFields['language']],
                 'parent' => $record[$transFusionFields['parent']],
                 'source' => $record[$transFusionFields['source']],
@@ -183,7 +182,7 @@ class TransfusionRepository
         $translationParent = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'];
         $translationSource = $GLOBALS['TCA'][$table]['ctrl']['translationSource'];
         $origUid = $GLOBALS['TCA'][$table]['ctrl']['origUid'];
-        $sortBy = $GLOBALS['TCA'][$table]['ctrl']['sortby'] ?? ($GLOBALS['TCA'][$table]['ctrl']['default_sortby'] ?? '');
+        $sortBy = $GLOBALS['TCA'][$table]['ctrl']['sortby'] ?? '';
         if (empty($languageField)) {
             throw new InvalidArgumentException(
                 'Table must be translatable and provide a language field. This table can\'t be translated',
@@ -339,7 +338,6 @@ class TransfusionRepository
             $preparedRecord = [
                 'uid' => $record['uid'],
                 'type' => $record[$transFusionFields['type']],
-                'sorting' => $record[$transFusionFields['sorting']],
                 'language' => $record[$transFusionFields['language']],
                 'parent' => $record[$transFusionFields['parent']],
                 'source' => $record[$transFusionFields['source']],
@@ -348,7 +346,7 @@ class TransfusionRepository
             ];
             $preparedRecord['column'] = ($table === 'tt_content' ? $record[$transFusionFields['column']] : '');
 
-            $fetchFields = $transFusionFields['language'] . ',' . $transFusionFields['type'] . ',' . $transFusionFields['sorting'];
+            $fetchFields = $transFusionFields['language'] . ',' . $transFusionFields['type'];
 
             if ($table === 'tt_content') {
                 $fetchFields .= ',' . $transFusionFields['column'];

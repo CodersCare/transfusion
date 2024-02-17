@@ -11,7 +11,7 @@ class TransfusionConnectorMoveAction {
         var direction = this.dataset.direction;
         var frequency = this.dataset.frequency;
         var fullElement = this.closest('.t3-page-ce-wrapper');
-        var inputElement = fullElement.getElementsByTagName('input')[0];
+        var inputElements = fullElement.getElementsByTagName('input');
         var targetCell = null;
         if (direction === 'left') {
           if (frequency === '1') {
@@ -22,7 +22,9 @@ class TransfusionConnectorMoveAction {
           }
           if (targetCell !== null) {
             targetCell.append(fullElement);
-            inputElement.removeAttribute('disabled');
+            for (var i = 0; i < inputElements.length; i++) {
+              inputElements[i].removeAttribute('disabled');
+            }
           }
         }
         if (direction === 'right') {
@@ -34,7 +36,9 @@ class TransfusionConnectorMoveAction {
           }
           if (targetCell !== null) {
             targetCell.append(fullElement);
-            inputElement.setAttribute('disabled', 'disabled');
+            for (var i = 0; i < inputElements.length; i++) {
+              inputElements[i].setAttribute('disabled', 'disabled');
+            }
           }
         }
       }
