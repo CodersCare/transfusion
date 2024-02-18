@@ -25,7 +25,7 @@
                                             partial="Preview"/>
                                     </td>
                                     <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-confirmed">
-                                        <f:for as="confirmedConnection" each="{record.confirmedConnections}">
+                                        <f:for as="confirmedConnection" each="{record.confirmedConnections}" >
                                             <f:render
                                                 arguments="{table: table, record: confirmedConnection, original: record, status: 'confirmed', interaction: 'false', transFusionFields: data.transFusionFields}"
                                                 partial="Preview"/>
@@ -49,6 +49,11 @@
                                         <f:for as="brokenConnection" each="{record.brokenConnections}">
                                             <f:render
                                                 arguments="{table: table, record: brokenConnection, original: record, status: 'broken', interaction: 'true', transFusionFields: data.transFusionFields}"
+                                                partial="Preview"/>
+                                        </f:for>
+                                        <f:for as="orphanedConnection" each="{record.orphanedConnections}">
+                                            <f:render
+                                                arguments="{table: table, record: orphanedConnection, original: record, status: 'orphaned', interaction: 'true', transFusionFields: data.transFusionFields}"
                                                 partial="Preview"/>
                                         </f:for>
                                     </td>

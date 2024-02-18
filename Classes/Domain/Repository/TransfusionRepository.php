@@ -46,14 +46,14 @@ class TransfusionRepository
      * @return array
      * @throws Exception
      */
-    public function fetchDefaultLanguageRecords(array $tables, int $language, int $page, array $fullDataMap): array
+    public function fetchDefaultLanguageRecordsAndConnections(array $tables, int $language, int $page, array $fullDataMap): array
     {
         $defaultLanguageRecords = [];
 
         foreach ($tables as $table) {
             $defaultLanguageRecords[$table] = [
                 'transFusionFields' => $this->checkTransFusionFields($table, ''),
-                'records' => $this->fetchDefaultLanguageRecordsForTable(
+                'records' => $this->fetchDefaultLanguageRecordsAndConnectionsForTable(
                     $table,
                     $language,
                     $page,
@@ -76,7 +76,7 @@ class TransfusionRepository
      * @return array
      * @throws Exception
      */
-    protected function fetchDefaultLanguageRecordsForTable(
+    protected function fetchDefaultLanguageRecordsAndConnectionsForTable(
         string $table,
         int $language,
         int $page,
@@ -116,29 +116,32 @@ class TransfusionRepository
                 'previewData' => $record
             ];
             $preparedRecord['column'] = ($table === 'tt_content' ? $record[$transFusionFields['column']] : '');
-            $connectedRecord = $this->getConnectedTranslation(
+            $connectedRecords = $this->getConnectedTranslations(
                 $table,
                 $record['uid'],
                 $language,
                 $transFusionFields
             );
-            if (!empty($connectedRecord)) {
+            if (!empty($connectedRecords)) {
                 // These records are already properly connected to their translation parent
-                $preparedRecord['confirmedConnections'][] = [
-                    'uid' => $connectedRecord['uid'],
-                    'icon' => $this->getIconForRecord($table, $connectedRecord),
-                    'previewData' => $connectedRecord
-                ];
-                $assigned[$connectedRecord['uid']] = true;
+                foreach ($connectedRecords as $connectedRecord) {
+                    $preparedRecord['confirmedConnections'][] = [
+                        'uid' => $connectedRecord['uid'],
+                        'icon' => $this->getIconForRecord($table, $connectedRecord),
+                        'previewData' => $connectedRecord
+                    ];
+                    $assigned[$connectedRecord['uid']] = true;
+                }
             }
             foreach ($fullDataMap[$table] as $dataMapRecord) {
+                $icon = $this->getIconForRecord($table, $dataMapRecord['previewData']);
                 if (
                     $dataMapRecord['original'] === $preparedRecord['uid']
                 ) {
                     // These records are fully matching their translation parent but are not connected yet
                     $preparedRecord['obviousConnections'][] = [
                         'uid' => $dataMapRecord['uid'],
-                        'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
+                        'icon' => $icon,
                         'previewData' => $dataMapRecord['previewData']
                     ];
                     $assigned[$dataMapRecord['uid']] = true;
@@ -151,7 +154,7 @@ class TransfusionRepository
                             // These records are matching their translation parent via their source but are not connected yet
                             $preparedRecord['possibleConnections'][] = [
                                 'uid' => $possibleParent['translation'],
-                                'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
+                                'icon' => $icon,
                                 'previewData' => $dataMapRecord['previewData']
                             ];
                             $assigned[$dataMapRecord['uid']] = true;
@@ -166,7 +169,7 @@ class TransfusionRepository
                             // These records are partly matching their translation parent but are not connected yet
                             $preparedRecord['brokenConnections'][] = [
                                 'uid' => $brokenOrOrphaned['translation'],
-                                'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
+                                'icon' => $icon,
                                 'previewData' => $dataMapRecord['previewData']
                             ];
                             $assigned[$dataMapRecord['uid']] = true;
@@ -180,12 +183,13 @@ class TransfusionRepository
         foreach ($fullDataMap[$table] as $dataMapRecord) {
             if (!empty($dataMapRecord['uid']) && empty($assigned[$dataMapRecord['uid']])) {
                 $preparedRecord = ['brokenConnections' => []];
-                $record = BackendUtility::getRecord($table, $dataMapRecord['uid']);
-                $preparedRecord['brokenConnections'][] = [
-                    'uid' => $dataMapRecord['uid'],
-                    'icon' => $this->getIconForRecord($table, $record),
-                    'previewData' => $record
-                ];
+                foreach ($dataMapRecord['brokenOrOrphaned'] as $brokenOrOrphaned) {
+                    $preparedRecord['orphanedConnections'][] = [
+                        'uid' => $brokenOrOrphaned['uid'],
+                        'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
+                        'previewData' => $dataMapRecord['previewData']
+                    ];
+                }
                 $defaultLanguageRecords[$dataMapRecord['uid']] = $preparedRecord;
             }
         }
@@ -265,7 +269,7 @@ class TransfusionRepository
      * @return array|false
      * @throws Exception
      */
-    protected function getConnectedTranslation(string $table, int $uid, int $language, array $transfusionFields): array|false
+    protected function getConnectedTranslations(string $table, int $uid, int $language, array $transfusionFields): array|false
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable($table);
@@ -287,7 +291,7 @@ class TransfusionRepository
                 )
             )
             ->executeQuery()
-            ->fetchAssociative();
+            ->fetchAllAssociative();
     }
 
     /**
@@ -452,6 +456,8 @@ class TransfusionRepository
                         ];
                     }
                 } else {
+                    unset($fullDataMap[$table][$preparedRecord['uid']]);
+                    $fullDataMap[$table]['NEW' . $preparedRecord['uid']] = $preparedRecord;
                     $fullDataMap[$table]['NEW' . $preparedRecord['uid']]['brokenOrOrphaned'][] = [
                         'uid' => 'NEW' . $preparedRecord['uid'],
                         'translation' => $preparedRecord['uid']

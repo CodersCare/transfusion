@@ -30,6 +30,7 @@ class TransfusionController
     protected IconFactory $iconFactory;
     protected DataHandler $dataHandler;
     protected BackendUserAuthentication $backendUser;
+    protected array $cmdMap = [];
     protected array $dataMap = [];
     protected array $fullDataMap = [];
 
@@ -52,9 +53,10 @@ class TransfusionController
         $this->checkAccess();
 
         $queryParams = $request->getQueryParams();
+        $this->cmdMap = $request->getParsedBody()['cmdMap'] ?? [];
         $this->dataMap = $request->getParsedBody()['dataMap'] ?? [];
 
-        if (!empty($this->dataMap)) {
+        if (!empty($this->cmdMap) || !empty($this->dataMap)) {
             $this->executeDataHandler();
         }
 
@@ -74,15 +76,15 @@ class TransfusionController
         $page = (int)$queryParams['connect']['page'];
 
         foreach ($tables as $table) {
-            $disconnectMapper = $this->transfusionRepository->fetchDisconnectedRecordsAndPrepareDataMap(
+            $disconnectedRecords = $this->transfusionRepository->fetchDisconnectedRecordsAndPrepareDataMap(
                 $table,
                 $language,
                 $page,
                 'connect',
                 $this->fullDataMap,
             );
-            $this->dataMap[$table] = $disconnectMapper['dataMap'] ?? [];
-            if ($disconnectMapper['needsInteraction']) {
+            $this->dataMap[$table] = $disconnectedRecords['dataMap'] ?? [];
+            if ($disconnectedRecords['needsInteraction']) {
                 $needsInteraction = true;
             }
         }
@@ -99,7 +101,7 @@ class TransfusionController
                     'docHeader' => $moduleTemplate->getDocHeaderComponent()->docHeaderContent(),
                     'connect' => $queryParams['connect'],
                     'returnUrl' => $queryParams['returnUrl'] ?? '',
-                    'defaultLanguageRecords' => $this->transfusionRepository->fetchDefaultLanguageRecords(
+                    'defaultLanguageRecords' => $this->transfusionRepository->fetchDefaultLanguageRecordsAndConnections(
                         $tables,
                         $language,
                         $page,
@@ -145,7 +147,8 @@ class TransfusionController
 
     protected function executeDataHandler(): void
     {
-        $this->dataHandler->start($this->dataMap, []);
+        $this->dataHandler->start($this->dataMap, $this->cmdMap);
+        $this->dataHandler->process_cmdmap();
         $this->dataHandler->process_datamap();
     }
 
