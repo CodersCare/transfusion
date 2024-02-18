@@ -99,6 +99,7 @@ class TransfusionController
             $moduleTemplate->assignMultiple(
                 [
                     'docHeader' => $moduleTemplate->getDocHeaderComponent()->docHeaderContent(),
+                    'workspace' => $this->backendUser->workspace,
                     'connect' => $queryParams['connect'],
                     'returnUrl' => $queryParams['returnUrl'] ?? '',
                     'defaultLanguageRecords' => $this->transfusionRepository->fetchDefaultLanguageRecordsAndConnections(

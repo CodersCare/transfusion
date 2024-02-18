@@ -4,66 +4,90 @@
       }"
 />
 
-<div class="{moduleClass}" data-module-id="{moduleId}" data-module-name="{moduleName}">
-    <div class="module-loading-indicator"></div>
-    <form action="{transfusion:uri.connect(page: connect.page, language: connect.language, returnUrl: returnUrl)}"
-          id="TransfusionController" method="post">
-        <f:render arguments="{docHeader: docHeader, returnUrl: returnUrl}" partial="Docheader"/>
-        <div class="module-body t3js-module-body">
-            <h1>TransFusion Connector</h1>
-            <div class="t3-grid-container">
-                <div class="t3-grid-container-inner">
-                    <f:for as="data" each="{defaultLanguageRecords}" key="table">
-                        <table class="t3-grid-table">
-                            <f:render partial="TableHead"/>
-                            <tbody>
-                            <f:for as="record" each="{data.records}">
-                                <tr>
-                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-original">
-                                        <f:render
-                                            arguments="{table: table, record: record, status: 'original', interaction: 'false', transFusionFields: data.transFusionFields}"
-                                            partial="Preview"/>
-                                    </td>
-                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-confirmed">
-                                        <f:for as="confirmedConnection" each="{record.confirmedConnections}" >
+<f:if condition="{workspace}===0">
+    <f:then>
+        <f:render section="TransFusionModule" arguments="{_all}" />
+    </f:then>
+    <f:else>
+        <div class="{moduleClass}" data-module-id="{moduleId}" data-module-name="{moduleName}">
+            <div class="module-loading-indicator"></div>
+            <form action="{transfusion:uri.connect(page: connect.page, language: connect.language, returnUrl: returnUrl)}"
+                  id="TransfusionController" method="post">
+                <f:render arguments="{docHeader: docHeader, returnUrl: returnUrl}" partial="Docheader"/>
+                <div class="module-body t3js-module-body">
+                    <h1>TransFusion Connector</h1>
+                    <div class="alert alert-warning">
+                        <h2>TransFusion connections can only be applied in a LIVE workspace.</h2>
+                        <h3>Please switch to the LIVE workspace now and reopen the module.</h3>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </f:else>
+</f:if>
+
+<f:section name="TransFusionModule">
+    <div class="{moduleClass}" data-module-id="{moduleId}" data-module-name="{moduleName}">
+        <div class="module-loading-indicator"></div>
+        <form action="{transfusion:uri.connect(page: connect.page, language: connect.language, returnUrl: returnUrl)}"
+              id="TransfusionController" method="post">
+            <f:render arguments="{docHeader: docHeader, returnUrl: returnUrl}" partial="Docheader"/>
+            <div class="module-body t3js-module-body">
+                <h1>TransFusion Connector</h1>
+                <div class="t3-grid-container">
+                    <div class="t3-grid-container-inner">
+                        <f:for as="data" each="{defaultLanguageRecords}" key="table">
+                            <table class="t3-grid-table">
+                                <f:render partial="TableHead"/>
+                                <tbody>
+                                <f:for as="record" each="{data.records}">
+                                    <tr>
+                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-original">
                                             <f:render
-                                                arguments="{table: table, record: confirmedConnection, original: record, status: 'confirmed', interaction: 'false', transFusionFields: data.transFusionFields}"
+                                                arguments="{table: table, record: record, status: 'original', interaction: 'false', transFusionFields: data.transFusionFields}"
                                                 partial="Preview"/>
-                                        </f:for>
-                                    </td>
-                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-obvious">
-                                        <f:for as="obviousConnection" each="{record.obviousConnections}">
-                                            <f:render
-                                                arguments="{table: table, record: obviousConnection, original: record, status: 'obvious', interaction: 'true', transFusionFields: data.transFusionFields}"
-                                                partial="Preview"/>
-                                        </f:for>
-                                    </td>
-                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-possible">
-                                        <f:for as="possibleConnection" each="{record.possibleConnections}">
-                                            <f:render
-                                                arguments="{table: table, record: possibleConnection, original: record, status: 'possible', interaction: 'true', transFusionFields: data.transFusionFields}"
-                                                partial="Preview"/>
-                                        </f:for>
-                                    </td>
-                                    <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-broken">
-                                        <f:for as="brokenConnection" each="{record.brokenConnections}">
-                                            <f:render
-                                                arguments="{table: table, record: brokenConnection, original: record, status: 'broken', interaction: 'true', transFusionFields: data.transFusionFields}"
-                                                partial="Preview"/>
-                                        </f:for>
-                                        <f:for as="orphanedConnection" each="{record.orphanedConnections}">
-                                            <f:render
-                                                arguments="{table: table, record: orphanedConnection, original: record, status: 'orphaned', interaction: 'true', transFusionFields: data.transFusionFields}"
-                                                partial="Preview"/>
-                                        </f:for>
-                                    </td>
-                                </tr>
-                            </f:for>
-                            </tbody>
-                        </table>
-                    </f:for>
+                                        </td>
+                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-confirmed">
+                                            <f:for as="confirmedConnection" each="{record.confirmedConnections}" >
+                                                <f:render
+                                                    arguments="{table: table, record: confirmedConnection, original: record, status: 'confirmed', interaction: 'false', transFusionFields: data.transFusionFields}"
+                                                    partial="Preview"/>
+                                            </f:for>
+                                        </td>
+                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-obvious">
+                                            <f:for as="obviousConnection" each="{record.obviousConnections}">
+                                                <f:render
+                                                    arguments="{table: table, record: obviousConnection, original: record, status: 'obvious', interaction: 'true', transFusionFields: data.transFusionFields}"
+                                                    partial="Preview"/>
+                                            </f:for>
+                                        </td>
+                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-possible">
+                                            <f:for as="possibleConnection" each="{record.possibleConnections}">
+                                                <f:render
+                                                    arguments="{table: table, record: possibleConnection, original: record, status: 'possible', interaction: 'true', transFusionFields: data.transFusionFields}"
+                                                    partial="Preview"/>
+                                            </f:for>
+                                        </td>
+                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-broken">
+                                            <f:for as="brokenConnection" each="{record.brokenConnections}">
+                                                <f:render
+                                                    arguments="{table: table, record: brokenConnection, original: record, status: 'broken', interaction: 'true', transFusionFields: data.transFusionFields}"
+                                                    partial="Preview"/>
+                                            </f:for>
+                                            <f:for as="orphanedConnection" each="{record.orphanedConnections}">
+                                                <f:render
+                                                    arguments="{table: table, record: orphanedConnection, original: record, status: 'orphaned', interaction: 'true', transFusionFields: data.transFusionFields}"
+                                                    partial="Preview"/>
+                                            </f:for>
+                                        </td>
+                                    </tr>
+                                </f:for>
+                                </tbody>
+                            </table>
+                        </f:for>
+                    </div>
                 </div>
             </div>
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+</f:section>

@@ -10,6 +10,7 @@ use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
+use TYPO3\CMS\Core\Database\Query\Restriction\WorkspaceRestriction;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -91,7 +92,8 @@ class TransfusionRepository
         $queryBuilder
             ->getRestrictions()
             ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+            ->add(GeneralUtility::makeInstance(WorkspaceRestriction::class));
         $defaultLanguageQuery = $queryBuilder
             ->select(
                 '*'
@@ -137,6 +139,7 @@ class TransfusionRepository
                 $icon = $this->getIconForRecord($table, $dataMapRecord['previewData']);
                 if (
                     $dataMapRecord['original'] === $preparedRecord['uid']
+                    && !isset($assigned[$dataMapRecord['uid']])
                 ) {
                     // These records are fully matching their translation parent but are not connected yet
                     $preparedRecord['obviousConnections'][] = [
@@ -148,6 +151,7 @@ class TransfusionRepository
                 }
                 if (
                     !empty($dataMapRecord['possibleParent'])
+                    && !isset($assigned[$dataMapRecord['uid']])
                 ) {
                     foreach ($dataMapRecord['possibleParent'] as $possibleParent) {
                         if ($possibleParent['uid'] === $preparedRecord['uid']) {
@@ -163,6 +167,7 @@ class TransfusionRepository
                 }
                 if (
                     !empty($dataMapRecord['brokenOrOrphaned'])
+                    && !isset($assigned[$dataMapRecord['uid']])
                 ) {
                     foreach ($dataMapRecord['brokenOrOrphaned'] as $brokenOrOrphaned) {
                         if ($brokenOrOrphaned['uid'] === $preparedRecord['uid']) {
@@ -275,7 +280,8 @@ class TransfusionRepository
             ->getQueryBuilderForTable($table);
         $queryBuilder->getRestrictions()
             ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+            ->add(GeneralUtility::makeInstance(WorkspaceRestriction::class));
 
         return $queryBuilder
             ->select('*')
@@ -317,7 +323,8 @@ class TransfusionRepository
         $queryBuilder
             ->getRestrictions()
             ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+            ->add(GeneralUtility::makeInstance(WorkspaceRestriction::class));
         $connectedRecords = $queryBuilder
             ->select('uid', $transFusionFields['source'], $transFusionFields['original'])
             ->from($table)
@@ -362,7 +369,8 @@ class TransfusionRepository
         $queryBuilder
             ->getRestrictions()
             ->removeAll()
-            ->add(GeneralUtility::makeInstance(DeletedRestriction::class));
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+            ->add(GeneralUtility::makeInstance(WorkspaceRestriction::class));
         $disconnectedRecords = $queryBuilder
             ->select(
                 '*'
