@@ -24,12 +24,16 @@ class TransfusionConnectorMoveAction {
             targetCell = fullElement.closest('td').previousElementSibling.previousElementSibling.previousElementSibling;
           }
           if (targetCell !== null) {
-            targetCell.append(fullElement);
-            for (var i = 0; i < inputElements.length; i++) {
-              if (inputElements[i].classList.contains('delete')) {
-                continue;
+            if (targetCell.getElementsByClassName('t3-page-ce-wrapper').length) {
+              alert('You can only connect one target element to each original record!');
+            } else {
+              targetCell.append(fullElement);
+              for (var i = 0; i < inputElements.length; i++) {
+                if (!inputElements[i].classList.contains('change')) {
+                  continue;
+                }
+                inputElements[i].removeAttribute('disabled');
               }
-              inputElements[i].removeAttribute('disabled');
             }
           }
         }
@@ -46,7 +50,7 @@ class TransfusionConnectorMoveAction {
           if (targetCell !== null) {
             targetCell.append(fullElement);
             for (var i = 0; i < inputElements.length; i++) {
-              if (inputElements[i].classList.contains('delete')) {
+              if (!inputElements[i].classList.contains('change')) {
                 continue;
               }
               inputElements[i].setAttribute('disabled', 'disabled');
@@ -70,6 +74,7 @@ class TransfusionConnectorMoveAction {
         this.setAttribute('title', this.dataset.enabledtitle);
         this.classList.remove('btn-default');
         this.classList.add('btn-warning');
+        alert('Marked for deletion');
       } else {
         deleteButton.setAttribute('disabled', 'disabled');
         this.setAttribute('title', this.dataset.disabledtitle);
@@ -84,16 +89,51 @@ class TransfusionConnectorMoveAction {
       deleteButtons[i].addEventListener("click", markForDeletion, false);
     }
 
-    var checkMarkedForDeletion = function(event) {
+    var removeAllConnections = function(event) {
       event.preventDefault();
-      var markedForDeletion = this.getElementsByClassName('btn-warning');
-      if (markedForDeletion.length) {
-        alert('Are you sure you want to delete the marked records?');
+      var fullElement = this.closest('.t3-page-ce-wrapper');
+      var inputElements = fullElement.getElementsByClassName('remove');
+      if (inputElements[0].getAttribute('disabled')==='disabled') {
+        for (var i = 0; i < inputElements.length; i++) {
+          if (!inputElements[i].classList.contains('remove')) {
+            continue;
+          }
+          inputElements[i].removeAttribute('disabled');
+        }
+        this.classList.remove('btn-default');
+        this.classList.add('btn-warning');
+        alert('Marked for removal of all connections');
+      } else {
+        for (var i = 0; i < inputElements.length; i++) {
+          if (!inputElements[i].classList.contains('remove')) {
+            continue;
+          }
+          inputElements[i].setAttribute('disabled', 'disabled');
+        }
+        this.classList.remove('btn-warning');
+        this.classList.add('btn-default');
       }
-      this.submit();
     }
 
-    document.getElementById("TransfusionController").addEventListener('submit', checkMarkedForDeletion, false);
+    var removeButtons = document.getElementsByClassName("btn-transfusion-remove");
+
+    for (var i = 0; i < removeButtons.length; i++) {
+      removeButtons[i].addEventListener("click", removeAllConnections, false);
+    }
+
+    var checkMarkedForRemovalOrDeletion = function(event) {
+      event.preventDefault();
+      var markedForRemovalOrDeletion = this.getElementsByClassName('btn-warning');
+      if (markedForRemovalOrDeletion.length) {
+        if (confirm('Are you sure you want to remove or delete the marked records?')) {
+          this.submit();
+        }
+      } else {
+        this.submit();
+      }
+    }
+
+    document.getElementById("TransfusionController").addEventListener('submit', checkMarkedForRemovalOrDeletion, false);
 
   }
 }
