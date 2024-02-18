@@ -29,9 +29,10 @@
                         {record.previewData.header}
                     </div>
                     <f:if condition="{status}!='original'">
-                        <button class="btn btn-default btn-sm btn-transfusion-delete">
-                            <core:icon identifier="actions-edit-delete"
-                                       title="Delete superfluous record"/>
+                        <button class="btn btn-default btn-sm btn-transfusion-delete" title="Delete superfluous record"
+                                data-enabledtitle="Marked for deletion!"
+                                data-disabledtitle="Delete superfluous record">
+                            <core:icon identifier="actions-edit-delete"/>
                         </button>
                     </f:if>
                     <f:if condition="{interaction}=='true'">
@@ -66,7 +67,8 @@
                    type="hidden"
                    value="{original.type}"/>
             <f:if condition="{original.column} !== ''">
-                <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.column}]" class="column"
+                <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.column}]"
+                       class="column"
                        type="hidden" value="{original.column}"/>
             </f:if>
         </div>

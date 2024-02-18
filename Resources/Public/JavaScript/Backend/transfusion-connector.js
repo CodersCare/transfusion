@@ -67,10 +67,12 @@ class TransfusionConnectorMoveAction {
       var deleteButton = fullElement.getElementsByClassName('delete')[0];
       if (deleteButton.getAttribute('disabled')==='disabled') {
         deleteButton.removeAttribute('disabled');
+        this.setAttribute('title', this.dataset.enabledtitle);
         this.classList.remove('btn-default');
         this.classList.add('btn-warning');
       } else {
         deleteButton.setAttribute('disabled', 'disabled');
+        this.setAttribute('title', this.dataset.disabledtitle);
         this.classList.add('btn-default');
         this.classList.remove('btn-warning');
       }
@@ -81,6 +83,18 @@ class TransfusionConnectorMoveAction {
     for (var i = 0; i < deleteButtons.length; i++) {
       deleteButtons[i].addEventListener("click", markForDeletion, false);
     }
+
+    var checkMarkedForDeletion = function(event) {
+      event.preventDefault();
+      var markedForDeletion = this.getElementsByClassName('btn-warning');
+      if (markedForDeletion.length) {
+        alert('Are you sure you want to delete the marked records?');
+      }
+      this.submit();
+    }
+
+    document.getElementById("TransfusionController").addEventListener('submit', checkMarkedForDeletion, false);
+
   }
 }
 
