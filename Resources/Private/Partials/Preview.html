@@ -1,20 +1,24 @@
 <f:if condition="{record.uid}">
     <div class="t3-page-ce-wrapper">
-        <div class="t3-page-ce" id="element-{table}-{record.uid}" data-table="{table}" data-uid="{record.uid}"
-             data-interaction="{interaction}">
+        <div class="t3-page-ce" data-interaction="{interaction}" data-table="{table}" data-uid="{record.uid}"
+             id="element-{table}-{record.uid}">
             <div class="t3-page-ce-element">
                 <div class="t3-page-ce-header">
                     <div class="t3-page-ce-header-left">
                         <f:if condition="{interaction}=='true'">
                             <f:if condition="{status}=='possible' || {status}=='broken'">
                                 <f:then>
-                                    <button class="btn btn-default btn-transfusion-selector" data-direction="left" data-status="{status}">
-                                        <core:icon title="Move to confirmed connections" identifier="actions-chevron-double-left" />
+                                    <button class="btn btn-default btn-transfusion-selector" data-direction="left"
+                                            data-status="{status}">
+                                        <core:icon identifier="actions-chevron-double-left"
+                                                   title="Move to confirmed connections"/>
                                     </button>
                                 </f:then>
                                 <f:else>
-                                    <button class="btn btn-default btn-transfusion-selector" data-direction="left" data-status="{status}">
-                                        <core:icon title="Move to confirmed connections" identifier="actions-chevron-left" />
+                                    <button class="btn btn-default btn-transfusion-selector" data-direction="left"
+                                            data-status="{status}">
+                                        <core:icon identifier="actions-chevron-left"
+                                                   title="Move to confirmed connections"/>
                                     </button>
                                 </f:else>
                             </f:if>
@@ -28,13 +32,17 @@
                         <div class="t3-page-ce-header-right">
                             <f:if condition="{status}=='possible' || {status}=='broken'">
                                 <f:then>
-                                    <button class="btn btn-default btn-transfusion-selector" data-direction="right" data-status="{status}">
-                                        <core:icon title="Remove from confirmed connections" identifier="actions-chevron-double-right" />
+                                    <button class="btn btn-default btn-transfusion-selector" data-direction="right"
+                                            data-status="{status}">
+                                        <core:icon identifier="actions-chevron-double-right"
+                                                   title="Remove from confirmed connections"/>
                                     </button>
                                 </f:then>
                                 <f:else>
-                                    <button class="btn btn-default btn-transfusion-selector" data-direction="right" data-status="{status}">
-                                        <core:icon title="Remove from confirmed connections" identifier="actions-chevron-right" />
+                                    <button class="btn btn-default btn-transfusion-selector" data-direction="right"
+                                            data-status="{status}">
+                                        <core:icon identifier="actions-chevron-right"
+                                                   title="Remove from confirmed connections"/>
                                     </button>
                                 </f:else>
                             </f:if>
@@ -44,10 +52,13 @@
             </div>
         </div>
         <div class="transfusion-input-wrapper">
-            <input name="dataMap[{table}][{record.uid}][{transFusionFields.parent}]" value="{original.uid}" type="hidden" disabled="disabled" />
-            <input name="dataMap[{table}][{record.uid}][{transFusionFields.type}]" value="{original.type}" type="hidden" disabled="disabled" />
+            <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.parent}]"
+                   type="hidden" value="{original.uid}"/>
+            <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.type}]" type="hidden"
+                   value="{original.type}"/>
             <f:if condition="{original.column} !== ''">
-                <input name="dataMap[{table}][{record.uid}][{transFusionFields.column}]" value="{original.column}" type="hidden" disabled="disabled" />
+                <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.column}]"
+                       type="hidden" value="{original.column}"/>
             </f:if>
         </div>
     </div>

@@ -21,8 +21,11 @@
                 </f:if>
                 <strong>
                     <f:format.raw>
-                        {docHeader.metaInformation.recordInformationIcon} {docHeader.metaInformation.recordInformationTitle}
-                        <f:if condition="{docHeader.metaInformation.recordInformationUid}">[{docHeader.metaInformation.recordInformationUid}]</f:if>
+                        {docHeader.metaInformation.recordInformationIcon}
+                        {docHeader.metaInformation.recordInformationTitle}
+                        <f:if condition="{docHeader.metaInformation.recordInformationUid}">
+                            [{docHeader.metaInformation.recordInformationUid}]
+                        </f:if>
                     </f:format.raw>
                 </strong>
                 {docHeader.metaInformation.recordInformationAdditionalInfo}
@@ -33,8 +36,13 @@
         class="module-docheader-bar module-docheader-bar-buttons t3js-module-docheader-bar t3js-module-docheader-bar-buttons">
         <div class="module-docheader-bar-column-left">
             <div aria-label="" class="btn-toolbar" role="toolbar">
-                <a href="{returnUrl}" class="btn btn-default btn-sm"><core:icon title="Move to confirmed connections" identifier="actions-close" />Close</a>
-                <button type="submit" class="btn btn-default btn-sm" title="Save"><core:icon title="Move to confirmed connections" identifier="actions-document-save" /> Save</button>
+                <a class="btn btn-default btn-sm" href="{returnUrl}">
+                    <core:icon identifier="actions-close" title="Move to confirmed connections"/>
+                    Close</a>
+                <button class="btn btn-default btn-sm" title="Save" type="submit">
+                    <core:icon identifier="actions-document-save" title="Move to confirmed connections"/>
+                    Save
+                </button>
             </div>
         </div>
         <div class="module-docheader-bar-column-right">
