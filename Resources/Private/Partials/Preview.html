@@ -8,7 +8,7 @@
                         <f:if condition="{interaction}=='true'">
                             <f:if condition="{status}=='orphaned'">
                                 <f:then>
-                                    <button class="btn btn-default btn-transfusion-selector" data-direction="left"
+                                    <button class="btn btn-default btn-transfusion-selector" data-direction="left" data-action="new"
                                             data-status="{status}">
                                         <core:icon identifier="actions-plus"
                                                    title="Add new translation parent and move to confirmed connections"/>
@@ -44,9 +44,16 @@
                     <f:if condition="{status}!='original' || {interaction}=='true'">
                         <div class="t3-page-ce-header-right">
                             <f:if condition="{status}!='orphaned'">
-                                <button class="btn btn-default btn-sm btn-transfusion-remove" title="Remove all connection information. Creates an orphaned record!">
-                                    <core:icon identifier="actions-unlink"/>
-                                </button>
+                                <f:then>
+                                    <button class="btn btn-default btn-sm btn-transfusion-remove" title="Remove all connection information. Creates an orphaned record!">
+                                        <core:icon identifier="actions-unlink"/>
+                                    </button>
+                                </f:then>
+                                <f:else>
+                                    <button class="btn btn-default btn-sm btn-transfusion-new" title="New parent record">
+                                        NEW
+                                    </button>
+                                </f:else>
                             </f:if>
                             <button class="btn btn-default btn-sm btn-transfusion-delete" title="Delete superfluous record"
                                     data-enabledtitle="Marked for deletion!"

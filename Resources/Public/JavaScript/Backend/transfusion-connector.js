@@ -10,8 +10,10 @@ class TransfusionConnectorMoveAction {
       if(typeof this.dataset.direction != "undefined" && typeof this.dataset.status != "undefined") {
         var direction = this.dataset.direction;
         var status = this.dataset.status;
+        var action = this.dataset.action;
         var fullElement = this.closest('.t3-page-ce-wrapper');
         var inputElements = fullElement.getElementsByTagName('input');
+        var parentCell = null;
         var targetCell = null;
         if (direction === 'left') {
           if (status === 'obvious') {
@@ -23,6 +25,9 @@ class TransfusionConnectorMoveAction {
           if (status === 'broken' || status === 'orphaned') {
             targetCell = fullElement.closest('td').previousElementSibling.previousElementSibling.previousElementSibling;
           }
+          if (status === 'orphaned' && action === 'new') {
+            parentCell = fullElement.closest('td').previousElementSibling.previousElementSibling.previousElementSibling.previousElementSibling;
+          }
           if (targetCell !== null) {
             if (targetCell.getElementsByClassName('t3-page-ce-wrapper').length) {
               alert('You can only connect one target element to each original record!');
@@ -33,6 +38,21 @@ class TransfusionConnectorMoveAction {
                   continue;
                 }
                 inputElements[i].removeAttribute('disabled');
+              }
+            }
+          }
+          if (parentCell !== null) {
+            if (parentCell.getElementsByClassName('t3-page-ce-wrapper').length) {
+              alert('You can only create one new parent element for each translated record!');
+            } else {
+              var parentElement = fullElement.cloneNode(true);
+              var parentInputElements = parentElement.getElementsByTagName('input');
+              parentCell.append(parentElement);
+              for (var i = 0; i < parentInputElements.length; i++) {
+                if (!parentInputElements[i].classList.contains('new')) {
+                  continue;
+                }
+                parentInputElements[i].removeAttribute('disabled');
               }
             }
           }
@@ -49,6 +69,9 @@ class TransfusionConnectorMoveAction {
           }
           if (targetCell !== null) {
             targetCell.append(fullElement);
+            if (status === 'orphaned') {
+              fullElement.closest('tr').getElementsByClassName('transfusion-original')[0].getElementsByClassName('t3-page-ce-wrapper')[0].remove();
+            }
             for (var i = 0; i < inputElements.length; i++) {
               if (!inputElements[i].classList.contains('change')) {
                 continue;

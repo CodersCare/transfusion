@@ -103,10 +103,20 @@
     margin-right: 1em;
 }
 
+.module-transfusion-connector .t3-grid-table .transfusion-original .t3-page-ce-header-left .btn-transfusion-new {
+    display: block;
+}
+.module-transfusion-connector .t3-grid-table .transfusion-original .t3-page-ce-header-left .btn-transfusion-selector,
 .module-transfusion-connector .t3-grid-table .transfusion-confirmed .t3-page-ce-header-left .btn-transfusion-selector,
+.module-transfusion-connector .t3-grid-table .transfusion-original .t3-page-ce-header-right .btn-transfusion-delete,
+.module-transfusion-connector .t3-grid-table .transfusion-original .t3-page-ce-header-right .btn-transfusion-selector,
 .module-transfusion-connector .t3-grid-table .transfusion-obvious .t3-page-ce-header-right .btn-transfusion-selector,
 .module-transfusion-connector .t3-grid-table .transfusion-possible .t3-page-ce-header-right .btn-transfusion-selector,
-.module-transfusion-connector .t3-grid-table .transfusion-broken .t3-page-ce-header-right .btn-transfusion-selector {
+.module-transfusion-connector .t3-grid-table .transfusion-broken .t3-page-ce-header-right .btn-transfusion-selector,
+.module-transfusion-connector .t3-grid-table .transfusion-confirmed .t3-page-ce-header-right .btn-transfusion-new,
+.module-transfusion-connector .t3-grid-table .transfusion-obvious .t3-page-ce-header-right .btn-transfusion-new,
+.module-transfusion-connector .t3-grid-table .transfusion-possible .t3-page-ce-header-right .btn-transfusion-new,
+.module-transfusion-connector .t3-grid-table .transfusion-broken .t3-page-ce-header-right .btn-transfusion-new {
     display: none;
 }
 
