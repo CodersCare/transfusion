@@ -39,7 +39,7 @@
                         <f:format.raw>{record.icon}</f:format.raw>
                     </div>
                     <div class="t3-page-ce-header-title">
-                        {record.previewData.header}
+                        {record.label}
                     </div>
                     <f:if condition="{status}!='original' || {interaction}=='true'">
                         <div class="t3-page-ce-header-right">
@@ -50,9 +50,7 @@
                                     </button>
                                 </f:then>
                                 <f:else>
-                                    <button class="btn btn-default btn-sm btn-transfusion-new" title="New parent record">
-                                        NEW
-                                    </button>
+                                    <button class="btn btn-warning btn-sm btn-transfusion-new" title="New parent record" disabled="disabled">NEW</button>
                                 </f:else>
                             </f:if>
                             <button class="btn btn-default btn-sm btn-transfusion-delete" title="Delete superfluous record"
@@ -88,21 +86,32 @@
                 <f:then>
                     <input disabled="disabled" name="cmdMap[{table}][{record.previewData.uid}][delete]" class="delete"
                            type="hidden" value="1"/>
+                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.type}]" class="new"
+                           type="hidden"
+                           value="{record.type}"/>
+                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][pid]" class="new"
+                           type="hidden"
+                           value="{record.pid}"/>
+                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.label}]" class="new"
+                           type="hidden"
+                           value="[NEW] {record.label}"/>
+                    <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.parent}]" class="change"
+                           type="hidden" value="{record.uid}"/>
                 </f:then>
                 <f:else>
                     <input disabled="disabled" name="cmdMap[{table}][{record.uid}][delete]" class="delete"
                            type="hidden" value="1"/>
+                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.parent}]" class="change"
+                           type="hidden" value="{original.uid}"/>
+                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.type}]" class="change"
+                           type="hidden"
+                           value="{original.type}"/>
+                    <f:if condition="{original.column} !== ''">
+                        <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.column}]"
+                               class="change"
+                               type="hidden" value="{original.column}"/>
+                    </f:if>
                 </f:else>
-            </f:if>
-            <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.parent}]" class="change"
-                   type="hidden" value="{original.uid}"/>
-            <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.type}]" class="change"
-                   type="hidden"
-                   value="{original.type}"/>
-            <f:if condition="{original.column} !== ''">
-                <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.column}]"
-                       class="change"
-                       type="hidden" value="{original.column}"/>
             </f:if>
             <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.parent}]" class="remove"
                    type="hidden" value="0"/>

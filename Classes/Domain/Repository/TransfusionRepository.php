@@ -86,7 +86,6 @@ class TransfusionRepository
     ): array {
         $defaultLanguageRecords = [];
         $assigned = [];
-        $brokenDataMapRecords = [];
         $transFusionFields = $this->checkTransFusionFields($table, $action);
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable($table);
         $queryBuilder
@@ -109,6 +108,8 @@ class TransfusionRepository
         while ($record = $defaultLanguageQuery->fetchAssociative()) {
             $preparedRecord = [
                 'uid' => $record['uid'],
+                'pid' => $record['pid'],
+                'label' => $record[$transFusionFields['label']],
                 'type' => $record[$transFusionFields['type']],
                 'language' => $record[$transFusionFields['language']],
                 'parent' => $record[$transFusionFields['parent']],
@@ -129,6 +130,9 @@ class TransfusionRepository
                 foreach ($connectedRecords as $connectedRecord) {
                     $preparedRecord['confirmedConnections'][] = [
                         'uid' => $connectedRecord['uid'],
+                        'pid' => $connectedRecord['pid'],
+                        'label' => $connectedRecord[$transFusionFields['label']],
+                        'type' => $connectedRecord[$transFusionFields['type']],
                         'icon' => $this->getIconForRecord($table, $connectedRecord),
                         'previewData' => $connectedRecord
                     ];
@@ -144,6 +148,9 @@ class TransfusionRepository
                     // These records are fully matching their translation parent but are not connected yet
                     $preparedRecord['obviousConnections'][] = [
                         'uid' => $dataMapRecord['uid'],
+                        'pid' => $dataMapRecord['previewData']['pid'],
+                        'label' => $dataMapRecord['previewData'][$transFusionFields['label']],
+                        'type' => $dataMapRecord['previewData'][$transFusionFields['type']],
                         'icon' => $icon,
                         'previewData' => $dataMapRecord['previewData']
                     ];
@@ -158,6 +165,9 @@ class TransfusionRepository
                             // These records are matching their translation parent via their source but are not connected yet
                             $preparedRecord['possibleConnections'][] = [
                                 'uid' => $possibleParent['translation'],
+                                'pid' => $dataMapRecord['previewData']['pid'],
+                                'label' => $dataMapRecord['previewData'][$transFusionFields['label']],
+                                'type' => $dataMapRecord['previewData'][$transFusionFields['type']],
                                 'icon' => $icon,
                                 'previewData' => $dataMapRecord['previewData']
                             ];
@@ -174,6 +184,9 @@ class TransfusionRepository
                             // These records are partly matching their translation parent but are not connected yet
                             $preparedRecord['brokenConnections'][] = [
                                 'uid' => $brokenOrOrphaned['translation'],
+                                'pid' => $dataMapRecord['previewData']['pid'],
+                                'label' => $dataMapRecord['previewData'][$transFusionFields['label']],
+                                'type' => $dataMapRecord['previewData'][$transFusionFields['type']],
                                 'icon' => $icon,
                                 'previewData' => $dataMapRecord['previewData']
                             ];
@@ -191,6 +204,9 @@ class TransfusionRepository
                 foreach ($dataMapRecord['brokenOrOrphaned'] as $brokenOrOrphaned) {
                     $preparedRecord['orphanedConnections'][] = [
                         'uid' => $brokenOrOrphaned['uid'],
+                        'pid' => $dataMapRecord['previewData']['pid'],
+                        'label' => $dataMapRecord['previewData'][$transFusionFields['label']],
+                        'type' => $dataMapRecord['previewData'][$transFusionFields['type']],
                         'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
                         'previewData' => $dataMapRecord['previewData']
                     ];
@@ -222,6 +238,7 @@ class TransfusionRepository
     public function checkTransFusionFields(string $table, string $action): array
     {
         $transFusionFields = [];
+        $labelField = $GLOBALS['TCA'][$table]['ctrl']['label'] ?? '';
         $typeField = $GLOBALS['TCA'][$table]['ctrl']['type'] ?? '';
         $languageField = $GLOBALS['TCA'][$table]['ctrl']['languageField'];
         $translationParent = $GLOBALS['TCA'][$table]['ctrl']['transOrigPointerField'];
@@ -252,6 +269,7 @@ class TransfusionRepository
                 1706372241
             );
         }
+        $transFusionFields['label'] = $labelField;
         $transFusionFields['type'] = $typeField;
         $transFusionFields['language'] = $languageField;
         $transFusionFields['parent'] = $translationParent;
