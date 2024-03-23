@@ -147,9 +147,18 @@ class TransfusionConnectorActions {
 
     var checkMarkedForRemovalOrDeletion = function(event) {
       event.preventDefault();
-      var markedForRemovalOrDeletion = this.getElementsByClassName('btn-warning');
-      if (markedForRemovalOrDeletion.length) {
-        if (confirm('Are you sure you want to remove or delete the marked records?')) {
+      var markedForRemoval = this.getElementsByClassName('btn-transfusion-remove btn-warning');
+      var markedForDeletion = this.getElementsByClassName('btn-transfusion-delete btn-warning');
+      if (markedForRemoval.length && markedForDeletion.length) {
+        if (confirm('Are you sure you want to remove connections from or delete marked records?')) {
+          this.submit();
+        }
+      } else if (markedForRemoval.length) {
+        if (confirm('Are you sure you want to remove connections from marked records?')) {
+          this.submit();
+        }
+      } else if (markedForDeletion.length) {
+        if (confirm('Are you sure you want to delete marked records?')) {
           this.submit();
         }
       } else {
