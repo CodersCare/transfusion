@@ -3,8 +3,40 @@
  * Provide actions to move items into the confirmed column and back
  */
 
-class TransfusionConnectorMoveAction {
+class TransfusionConnectorActions {
   constructor() {
+    var enableInputElements = function(inputElements, action){
+      for (var i = 0; i < inputElements.length; i++) {
+        if (!inputElements[i].classList.contains(action)) {
+          continue;
+        }
+        inputElements[i].removeAttribute('disabled');
+      }
+    }
+    var activateButton = function(button, action) {
+      button.setAttribute('title', button.dataset.enabledtitle);
+      button.classList.remove('btn-default');
+      button.classList.add('btn-warning');
+      var fullElement = button.closest('.t3-page-ce-wrapper');
+      var inputElements = fullElement.getElementsByClassName(action);
+      enableInputElements(inputElements, action)
+    }
+    var disableInputElements = function(inputElements, action){
+      for (var i = 0; i < inputElements.length; i++) {
+        if (!inputElements[i].classList.contains(action)) {
+          continue;
+        }
+        inputElements[i].setAttribute('disabled', 'disabled');
+      }
+    }
+    var deactivateButton = function(button, action) {
+      button.setAttribute('title', button.dataset.disabledtitle);
+      button.classList.add('btn-default');
+      button.classList.remove('btn-warning');
+      var fullElement = button.closest('.t3-page-ce-wrapper');
+      var inputElements = fullElement.getElementsByClassName(action);
+      disableInputElements(inputElements, action)
+    }
     var moveOnceOrTwice = function(event) {
       event.preventDefault();
       if(typeof this.dataset.direction != "undefined" && typeof this.dataset.status != "undefined") {
@@ -33,12 +65,7 @@ class TransfusionConnectorMoveAction {
               alert('You can only connect one target element to each original record!');
             } else {
               targetCell.append(fullElement);
-              for (var i = 0; i < inputElements.length; i++) {
-                if (!inputElements[i].classList.contains('change')) {
-                  continue;
-                }
-                inputElements[i].removeAttribute('disabled');
-              }
+              enableInputElements(inputElements, 'change')
             }
           }
           if (parentCell !== null) {
@@ -48,12 +75,7 @@ class TransfusionConnectorMoveAction {
               var parentElement = fullElement.cloneNode(true);
               var parentInputElements = parentElement.getElementsByTagName('input');
               parentCell.append(parentElement);
-              for (var i = 0; i < parentInputElements.length; i++) {
-                if (!parentInputElements[i].classList.contains('new')) {
-                  continue;
-                }
-                parentInputElements[i].removeAttribute('disabled');
-              }
+              enableInputElements(parentInputElements, 'new')
             }
           }
         }
@@ -72,12 +94,7 @@ class TransfusionConnectorMoveAction {
             if (status === 'orphaned') {
               fullElement.closest('tr').getElementsByClassName('transfusion-original')[0].getElementsByClassName('t3-page-ce-wrapper')[0].remove();
             }
-            for (var i = 0; i < inputElements.length; i++) {
-              if (!inputElements[i].classList.contains('change')) {
-                continue;
-              }
-              inputElements[i].setAttribute('disabled', 'disabled');
-            }
+            disableInputElements(inputElements, 'change');
           }
         }
       }
@@ -92,17 +109,13 @@ class TransfusionConnectorMoveAction {
       event.preventDefault();
       var fullElement = this.closest('.t3-page-ce-wrapper');
       var deleteButton = fullElement.getElementsByClassName('delete')[0];
+      var removeButton = fullElement.getElementsByClassName('btn-transfusion-remove')[0];
       if (deleteButton.getAttribute('disabled')==='disabled') {
-        deleteButton.removeAttribute('disabled');
-        this.setAttribute('title', this.dataset.enabledtitle);
-        this.classList.remove('btn-default');
-        this.classList.add('btn-warning');
+        activateButton(this, 'delete');
+        deactivateButton(removeButton, 'remove');
         alert('Marked for deletion');
       } else {
-        deleteButton.setAttribute('disabled', 'disabled');
-        this.setAttribute('title', this.dataset.disabledtitle);
-        this.classList.add('btn-default');
-        this.classList.remove('btn-warning');
+        deactivateButton(this, 'delete');
       }
     }
 
@@ -115,26 +128,14 @@ class TransfusionConnectorMoveAction {
     var removeAllConnections = function(event) {
       event.preventDefault();
       var fullElement = this.closest('.t3-page-ce-wrapper');
-      var inputElements = fullElement.getElementsByClassName('remove');
-      if (inputElements[0].getAttribute('disabled')==='disabled') {
-        for (var i = 0; i < inputElements.length; i++) {
-          if (!inputElements[i].classList.contains('remove')) {
-            continue;
-          }
-          inputElements[i].removeAttribute('disabled');
-        }
-        this.classList.remove('btn-default');
-        this.classList.add('btn-warning');
+      var removeButton = fullElement.getElementsByClassName('remove')[0];
+      var deleteButton = fullElement.getElementsByClassName('btn-transfusion-delete')[0];
+      if (removeButton.getAttribute('disabled')==='disabled') {
+        activateButton(this, 'remove');
+        deactivateButton(deleteButton, 'delete');
         alert('Marked for removal of all connections');
       } else {
-        for (var i = 0; i < inputElements.length; i++) {
-          if (!inputElements[i].classList.contains('remove')) {
-            continue;
-          }
-          inputElements[i].setAttribute('disabled', 'disabled');
-        }
-        this.classList.remove('btn-warning');
-        this.classList.add('btn-default');
+        deactivateButton(this, 'remove');
       }
     }
 
@@ -161,4 +162,4 @@ class TransfusionConnectorMoveAction {
   }
 }
 
-export default new TransfusionConnectorMoveAction();
+export default new TransfusionConnectorActions();
