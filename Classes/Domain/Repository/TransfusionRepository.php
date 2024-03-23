@@ -115,7 +115,7 @@ class TransfusionRepository
                 'parent' => $record[$transFusionFields['parent']],
                 'source' => $record[$transFusionFields['source']],
                 'original' => $record[$transFusionFields['original']],
-                'icon' => $this->getIconForRecord($table, $record),
+                'icon' => $this->getIconForRecord($table, $record, $record[$transFusionFields['label']]),
                 'previewData' => $record
             ];
             $preparedRecord['column'] = ($table === 'tt_content' ? $record[$transFusionFields['column']] : '');
@@ -133,14 +133,14 @@ class TransfusionRepository
                         'pid' => $connectedRecord['pid'],
                         'label' => $connectedRecord[$transFusionFields['label']],
                         'type' => $connectedRecord[$transFusionFields['type']],
-                        'icon' => $this->getIconForRecord($table, $connectedRecord),
+                        'icon' => $this->getIconForRecord($table, $connectedRecord, $connectedRecord[$transFusionFields['label']]),
                         'previewData' => $connectedRecord
                     ];
                     $assigned[$connectedRecord['uid']] = true;
                 }
             }
             foreach ($fullDataMap[$table] as $dataMapRecord) {
-                $icon = $this->getIconForRecord($table, $dataMapRecord['previewData']);
+                $icon = $this->getIconForRecord($table, $dataMapRecord['previewData'], $dataMapRecord['previewData'][$transFusionFields['label']]);
                 if (
                     $dataMapRecord['original'] === $preparedRecord['uid']
                     && !isset($assigned[$dataMapRecord['uid']])
@@ -207,7 +207,7 @@ class TransfusionRepository
                         'pid' => $dataMapRecord['previewData']['pid'],
                         'label' => $dataMapRecord['previewData'][$transFusionFields['label']],
                         'type' => $dataMapRecord['previewData'][$transFusionFields['type']],
-                        'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData']),
+                        'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData'], $dataMapRecord['previewData'][$transFusionFields['label']]),
                         'previewData' => $dataMapRecord['previewData']
                     ];
                 }
@@ -220,13 +220,14 @@ class TransfusionRepository
     /**
      * @param string $table
      * @param array $record
+     * @param string $label
      * @return string
      */
-    protected function getIconForRecord(string $table, array $record): string
+    protected function getIconForRecord(string $table, array $record, string $label): string
     {
         return $this->iconFactory
             ->getIconForRecord($table, $record, Icon::SIZE_SMALL)
-            ->setTitle(BackendUtility::getRecordIconAltText($record, $table))
+            ->setTitle(BackendUtility::getRecordIconAltText($record, $table) . ' # ' . $label)
             ->render();
     }
 
