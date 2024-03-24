@@ -472,10 +472,17 @@ class TransfusionRepository
                     if (
                         $possibleParentRecord[$transFusionFields['type']] === $preparedRecord['type']
                     ) {
-                        $fullDataMap[$table][$preparedRecord['uid']]['possibleParent'][] = [
-                            'uid' => $possibleParentRecord[$transFusionFields['original']],
-                            'translation' => $preparedRecord['uid']
-                        ];
+                        if (!empty($possibleParentRecord[$transFusionFields['original']])) {
+                            $fullDataMap[$table][$preparedRecord['uid']]['possibleParent'][] = [
+                                'uid' => $possibleParentRecord[$transFusionFields['original']],
+                                'translation' => $preparedRecord['uid']
+                            ];
+                        } else {
+                            $fullDataMap[$table][$preparedRecord['uid']]['possibleParent'][] = [
+                                'uid' => $possibleParentRecord['uid'],
+                                'translation' => $preparedRecord['uid']
+                            ];
+                        }
                     } else {
                         $fullDataMap[$table][$preparedRecord['uid']]['brokenOrOrphaned'][] = [
                             'uid' => $possibleParentRecord[$transFusionFields['original']],

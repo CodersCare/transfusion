@@ -97,6 +97,8 @@
                            value="[NEW] {record.label}"/>
                     <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.parent}]" class="change"
                            type="hidden" value="{record.uid}"/>
+                    <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.source}]" class="change"
+                           type="hidden" value="{record.uid}"/>
                 </f:then>
                 <f:else>
                     <input disabled="disabled" name="cmdMap[{table}][{record.uid}][delete]" class="delete"
