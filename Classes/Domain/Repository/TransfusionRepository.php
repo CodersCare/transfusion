@@ -179,6 +179,7 @@ class TransfusionRepository
                     !empty($dataMapRecord['brokenOrOrphaned'])
                     && !isset($assigned[$dataMapRecord['uid']])
                 ) {
+                    $preparedRecord['brokenConnections'] = [];
                     foreach ($dataMapRecord['brokenOrOrphaned'] as $brokenOrOrphaned) {
                         if ($brokenOrOrphaned['uid'] === $preparedRecord['uid']) {
                             // These records are partly matching their translation parent but are not connected yet
@@ -201,7 +202,7 @@ class TransfusionRepository
         foreach ($fullDataMap[$table] as $dataMapRecord) {
             if (!empty($dataMapRecord['uid']) && empty($assigned[$dataMapRecord['uid']])) {
                 if (!empty($dataMapRecord['brokenOrOrphaned'])) {
-                    $preparedRecord = ['brokenConnections' => []];
+                    $preparedRecord = ['orphanedConnections' => []];
                     foreach ($dataMapRecord['brokenOrOrphaned'] as $brokenOrOrphaned) {
                         $preparedRecord['orphanedConnections'][] = [
                             'uid' => $brokenOrOrphaned['uid'],
@@ -212,9 +213,6 @@ class TransfusionRepository
                             'previewData' => $dataMapRecord['previewData']
                         ];
                     }
-                }
-                if (!empty($preparedRecord)) {
-                    $defaultLanguageRecords[$dataMapRecord['uid']] = $preparedRecord;
                 }
             }
         }
