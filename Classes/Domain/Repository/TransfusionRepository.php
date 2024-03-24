@@ -200,16 +200,18 @@ class TransfusionRepository
         // Look for orphaned records that did not match the previous process
         foreach ($fullDataMap[$table] as $dataMapRecord) {
             if (!empty($dataMapRecord['uid']) && empty($assigned[$dataMapRecord['uid']])) {
-                $preparedRecord = ['brokenConnections' => []];
-                foreach ($dataMapRecord['brokenOrOrphaned'] as $brokenOrOrphaned) {
-                    $preparedRecord['orphanedConnections'][] = [
-                        'uid' => $brokenOrOrphaned['uid'],
-                        'pid' => $dataMapRecord['previewData']['pid'],
-                        'label' => $dataMapRecord['previewData'][$transFusionFields['label']],
-                        'type' => $dataMapRecord['previewData'][$transFusionFields['type']],
-                        'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData'], $dataMapRecord['previewData'][$transFusionFields['label']]),
-                        'previewData' => $dataMapRecord['previewData']
-                    ];
+                if (!empty($dataMapRecord['brokenOrOrphaned'])) {
+                    $preparedRecord = ['brokenConnections' => []];
+                    foreach ($dataMapRecord['brokenOrOrphaned'] as $brokenOrOrphaned) {
+                        $preparedRecord['orphanedConnections'][] = [
+                            'uid' => $brokenOrOrphaned['uid'],
+                            'pid' => $dataMapRecord['previewData']['pid'],
+                            'label' => $dataMapRecord['previewData'][$transFusionFields['label']],
+                            'type' => $dataMapRecord['previewData'][$transFusionFields['type']],
+                            'icon' => $this->getIconForRecord($table, $dataMapRecord['previewData'], $dataMapRecord['previewData'][$transFusionFields['label']]),
+                            'previewData' => $dataMapRecord['previewData']
+                        ];
+                    }
                 }
                 $defaultLanguageRecords[$dataMapRecord['uid']] = $preparedRecord;
             }
