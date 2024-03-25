@@ -213,7 +213,9 @@ class TransfusionRepository
                         ];
                     }
                 }
-                $defaultLanguageRecords[$dataMapRecord['uid']] = $preparedRecord;
+                if (!empty($preparedRecord)) {
+                    $defaultLanguageRecords[$dataMapRecord['uid']] = $preparedRecord;
+                }
             }
         }
         return $defaultLanguageRecords;
