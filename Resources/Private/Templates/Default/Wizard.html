@@ -37,11 +37,12 @@
                 <div class="t3-grid-container">
                     <div class="t3-grid-container-inner">
                         <f:for as="data" each="{defaultLanguageRecords}" key="table">
+
                             <table class="t3-grid-table">
                                 <f:render partial="TableHead"/>
                                 <tbody>
                                 <f:for as="record" each="{data.records}">
-                                    <tr>
+                                    <tr class="content-row">
                                         <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-original">
                                             <f:render
                                                 arguments="{table: table, record: record, status: 'original', interaction: 'false', transFusionFields: data.transFusionFields}"
@@ -81,6 +82,29 @@
                                             </f:for>
                                         </td>
                                     </tr>
+                                    <f:if condition="{record.relatedFiles}">
+                                        <f:for as="fileField" each="{record.relatedFiles}" key="field">
+                                            <f:if condition="{fileField}">
+                                                <f:for as="file" each="{fileField}">
+                                                    <tr class="file-row file-row-{record.uid}">
+                                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-original">
+                                                            <f:render
+                                                                arguments="{table: 'sys_file_reference', record: file, status: 'original', interaction: 'false', transFusionFields: data.transFusionFields}"
+                                                                partial="Preview"/>
+                                                        </td>
+                                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-confirmed">
+                                                        </td>
+                                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-obvious">
+                                                        </td>
+                                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-possible">
+                                                        </td>
+                                                        <td class="t3-grid-cell t3-page-column t3-gridCell-width1 t3-gridCell-height1 transfusion-broken">
+                                                        </td>
+                                                    </tr>
+                                                </f:for>
+                                            </f:if>
+                                        </f:for>
+                                    </f:if>
                                 </f:for>
                                 </tbody>
                             </table>

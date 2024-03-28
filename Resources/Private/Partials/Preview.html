@@ -3,82 +3,14 @@
         <div class="t3-page-ce" data-interaction="{interaction}" data-table="{table}" data-uid="{record.uid}"
              id="element-{table}-{record.uid}">
             <div class="t3-page-ce-element">
-                <div class="t3-page-ce-header">
-                    <div class="t3-page-ce-header-left">
-                        <f:if condition="{interaction}=='true'">
-                            <f:if condition="{status}=='orphaned'">
-                                <f:then>
-                                    <button class="btn btn-default btn-transfusion-selector" data-direction="left" data-action="new"
-                                            data-status="{status}">
-                                        <core:icon identifier="actions-plus"
-                                                   title="Add new translation parent and move to confirmed connections"/>
-                                        <core:icon identifier="actions-chevron-double-left"
-                                                   title="Add new translation parent and move to confirmed connections"/>
-                                    </button>
-                                </f:then>
-                                <f:else>
-                                    <f:if condition="{status}=='possible' || {status}=='broken'">
-                                        <f:then>
-                                            <button class="btn btn-default btn-transfusion-selector" data-direction="left"
-                                                    data-status="{status}">
-                                                <core:icon identifier="actions-chevron-double-left"
-                                                           title="Move to confirmed connections"/>
-                                            </button>
-                                        </f:then>
-                                        <f:else>
-                                            <button class="btn btn-default btn-transfusion-selector" data-direction="left"
-                                                    data-status="{status}">
-                                                <core:icon identifier="actions-chevron-left"
-                                                           title="Move to confirmed connections"/>
-                                            </button>
-                                        </f:else>
-                                    </f:if>
-                                </f:else>
-                            </f:if>
-                        </f:if>
-                        <f:format.raw>{record.icon}</f:format.raw>
-                    </div>
-                    <div class="t3-page-ce-header-title">
-                        {record.label}
-                    </div>
-                    <f:if condition="{status}!='original' || {interaction}=='true'">
-                        <div class="t3-page-ce-header-right">
-                            <f:if condition="{status}!='orphaned'">
-                                <f:then>
-                                    <button class="btn btn-default btn-sm btn-transfusion-remove" title="Remove all connection information. Creates an orphaned record!">
-                                        <core:icon identifier="actions-unlink"/>
-                                    </button>
-                                </f:then>
-                                <f:else>
-                                    <button class="btn btn-warning btn-sm btn-transfusion-new" title="New parent record" disabled="disabled">NEW</button>
-                                </f:else>
-                            </f:if>
-                            <button class="btn btn-default btn-sm btn-transfusion-delete" title="Delete superfluous record"
-                                    data-enabledtitle="Marked for deletion!"
-                                    data-disabledtitle="Delete superfluous record">
-                                <core:icon identifier="actions-edit-delete"/>
-                            </button>
-                            <f:if condition="{interaction}=='true'">
-                                <f:if condition="{status}=='possible' || {status}=='broken' || {status}=='orphaned'">
-                                    <f:then>
-                                        <button class="btn btn-default btn-transfusion-selector" data-direction="right"
-                                                data-status="{status}">
-                                            <core:icon identifier="actions-chevron-double-right"
-                                                       title="Remove from confirmed connections"/>
-                                        </button>
-                                    </f:then>
-                                    <f:else>
-                                        <button class="btn btn-default btn-transfusion-selector" data-direction="right"
-                                                data-status="{status}">
-                                            <core:icon identifier="actions-chevron-right"
-                                                       title="Remove from confirmed connections"/>
-                                        </button>
-                                    </f:else>
-                                </f:if>
-                            </f:if>
-                        </div>
-                    </f:if>
-                </div>
+                <f:switch expression="{table}">
+                    <f:case value="sys_file_reference">
+                        <f:render section="sys_file_reference" arguments="{_all}" />
+                    </f:case>
+                    <f:defaultCase>
+                        <f:render section="tt_content" arguments="{_all}" />
+                    </f:defaultCase>
+                </f:switch>
             </div>
         </div>
         <div class="transfusion-input-wrapper">
@@ -126,3 +58,174 @@
         </div>
     </div>
 </f:if>
+
+
+<f:section name="tt_content">
+    <div class="t3-page-ce-header">
+        <div class="t3-page-ce-header-left">
+            <f:if condition="{interaction}=='true'">
+                <f:if condition="{status}=='orphaned'">
+                    <f:then>
+                        <button class="btn btn-default btn-transfusion-selector" data-direction="left" data-action="new"
+                                data-status="{status}">
+                            <core:icon identifier="actions-plus"
+                                       title="Add new translation parent and move to confirmed connections"/>
+                            <core:icon identifier="actions-chevron-double-left"
+                                       title="Add new translation parent and move to confirmed connections"/>
+                        </button>
+                    </f:then>
+                    <f:else>
+                        <f:if condition="{status}=='possible' || {status}=='broken'">
+                            <f:then>
+                                <button class="btn btn-default btn-transfusion-selector" data-direction="left"
+                                        data-status="{status}">
+                                    <core:icon identifier="actions-chevron-double-left"
+                                               title="Move to confirmed connections"/>
+                                </button>
+                            </f:then>
+                            <f:else>
+                                <button class="btn btn-default btn-transfusion-selector" data-direction="left"
+                                        data-status="{status}">
+                                    <core:icon identifier="actions-chevron-left"
+                                               title="Move to confirmed connections"/>
+                                </button>
+                            </f:else>
+                        </f:if>
+                    </f:else>
+                </f:if>
+            </f:if>
+            <f:format.raw>{record.icon}</f:format.raw>
+        </div>
+        <div class="t3-page-ce-header-title">
+            {record.label}
+        </div>
+        <f:if condition="{status}!='original' || {interaction}=='true' || {record.relatedFiles}">
+            <div class="t3-page-ce-header-right">
+                <f:if condition="{record.relatedFiles}">
+                    <button class="btn btn-sm btn-default btn-transfusion-toggle-files" data-toggleid="{record.uid}">
+                        <core:icon identifier="actions-chevron-down" title="Show attached files"/>
+                        <core:icon identifier="actions-chevron-up" title="Hide attached files"/>
+                        Files
+                    </button>
+                </f:if>
+                <f:if condition="{status}!='orphaned'">
+                    <f:then>
+                        <f:if condition="{status}!='orphaned' && {status}!='original'">
+                            <button class="btn btn-default btn-sm btn-transfusin-remove" title="Remove all connection information. Creates an orphaned record!">
+                                <core:icon identifier="actions-unlink"/>
+                            </button>
+                        </f:if>
+                    </f:then>
+                    <f:else>
+                        <button class="btn btn-warning btn-sm btn-transfusion-new" title="New parent record" disabled="disabled">NEW</button>
+                    </f:else>
+                </f:if>
+                <button class="btn btn-default btn-sm btn-transfusion-delete" title="Delete superfluous record"
+                        data-enabledtitle="Marked for deletion!"
+                        data-disabledtitle="Delete superfluous record">
+                    <core:icon identifier="actions-edit-delete"/>
+                </button>
+                <f:if condition="{interaction}=='true'">
+                    <f:if condition="{status}=='possible' || {status}=='broken' || {status}=='orphaned'">
+                        <f:then>
+                            <button class="btn btn-default btn-transfusion-selector" data-direction="right"
+                                    data-status="{status}">
+                                <core:icon identifier="actions-chevron-double-right"
+                                           title="Remove from confirmed connections"/>
+                            </button>
+                        </f:then>
+                        <f:else>
+                            <button class="btn btn-default btn-transfusion-selector" data-direction="right"
+                                    data-status="{status}">
+                                <core:icon identifier="actions-chevron-right"
+                                           title="Remove from confirmed connections"/>
+                            </button>
+                        </f:else>
+                    </f:if>
+                </f:if>
+            </div>
+        </f:if>
+    </div>
+</f:section>
+
+<f:section name="sys_file_reference">
+    <div class="t3-page-ce-header">
+        <div class="t3-page-ce-header-left">
+            <f:if condition="{interaction}=='true'">
+                <f:if condition="{status}=='orphaned'">
+                    <f:then>
+                        <button class="btn btn-default btn-transfusion-selector" data-direction="left" data-action="new"
+                                data-status="{status}">
+                            <core:icon identifier="actions-plus"
+                                       title="Add new translation parent and move to confirmed connections"/>
+                            <core:icon identifier="actions-chevron-double-left"
+                                       title="Add new translation parent and move to confirmed connections"/>
+                        </button>
+                    </f:then>
+                    <f:else>
+                        <f:if condition="{status}=='possible' || {status}=='broken'">
+                            <f:then>
+                                <button class="btn btn-default btn-transfusion-selector" data-direction="left"
+                                        data-status="{status}">
+                                    <core:icon identifier="actions-chevron-double-left"
+                                               title="Move to confirmed connections"/>
+                                </button>
+                            </f:then>
+                            <f:else>
+                                <button class="btn btn-default btn-transfusion-selector" data-direction="left"
+                                        data-status="{status}">
+                                    <core:icon identifier="actions-chevron-left"
+                                               title="Move to confirmed connections"/>
+                                </button>
+                            </f:else>
+                        </f:if>
+                    </f:else>
+                </f:if>
+            </f:if>
+            <f:format.raw>{record.icon}</f:format.raw>
+        </div>
+        <div class="t3-page-ce-header-preview-image">
+            <f:image image="{record}" height="30" />
+        </div>
+        <div class="t3-page-ce-header-title">
+            {record.name}
+        </div>
+        <f:if condition="{status}!='original' || {interaction}=='true'">
+            <div class="t3-page-ce-header-right">
+                <f:if condition="{status}!='orphaned'">
+                    <f:then>
+                        <button class="btn btn-default btn-sm btn-transfusion-remove" title="Remove all connection information. Creates an orphaned record!">
+                            <core:icon identifier="actions-unlink"/>
+                        </button>
+                    </f:then>
+                    <f:else>
+                        <button class="btn btn-warning btn-sm btn-transfusion-new" title="New parent record" disabled="disabled">NEW</button>
+                    </f:else>
+                </f:if>
+                <button class="btn btn-default btn-sm btn-transfusion-delete" title="Delete superfluous record"
+                        data-enabledtitle="Marked for deletion!"
+                        data-disabledtitle="Delete superfluous record">
+                    <core:icon identifier="actions-edit-delete"/>
+                </button>
+                <f:if condition="{interaction}=='true'">
+                    <f:if condition="{status}=='possible' || {status}=='broken' || {status}=='orphaned'">
+                        <f:then>
+                            <button class="btn btn-default btn-transfusion-selector" data-direction="right"
+                                    data-status="{status}">
+                                <core:icon identifier="actions-chevron-double-right"
+                                           title="Remove from confirmed connections"/>
+                            </button>
+                        </f:then>
+                        <f:else>
+                            <button class="btn btn-default btn-transfusion-selector" data-direction="right"
+                                    data-status="{status}">
+                                <core:icon identifier="actions-chevron-right"
+                                           title="Remove from confirmed connections"/>
+                            </button>
+                        </f:else>
+                    </f:if>
+                </f:if>
+            </div>
+        </f:if>
+    </div>
+</f:section>

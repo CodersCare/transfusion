@@ -144,6 +144,65 @@ class TransfusionConnectorActions {
     for (var i = 0; i < removeButtons.length; i++) {
       removeButtons[i].addEventListener("click", removeAllConnections, false);
     }
+    var toggleAttachedFiles = function(event) {
+      event.preventDefault();
+      var toggleId = this.dataset.toggleid;
+      var table = this.closest('table');
+      var toggleAllButton = table.getElementsByClassName('btn-transfusion-toggle-all-files');
+      var toggleRows = table.getElementsByClassName('file-row-' + toggleId);
+      for (var i = 0; i < toggleRows.length; i++) {
+        if (toggleRows[i].classList.contains('file-row-active')) {
+          toggleRows[i].classList.remove('file-row-active');
+        } else {
+          toggleRows[i].classList.add('file-row-active');
+        }
+      }
+      var activeRows = table.getElementsByClassName('file-row-active');
+      if (activeRows.length) {
+        toggleAllButton[0].classList.add('btn-transfusion-toggle-all-files-active');
+      } else {
+        toggleAllButton[0].classList.remove('btn-transfusion-toggle-all-files-active');
+      }
+      if (this.classList.contains('btn-transfusion-toggle-files-active')) {
+        this.classList.remove('btn-transfusion-toggle-files-active');
+      } else {
+        this.classList.add('btn-transfusion-toggle-files-active');
+      }
+    }
+
+    var toggleAllAttachedFiles = function(event) {
+      event.preventDefault();
+      var table = this.closest('table');
+      var toggleRows = table.getElementsByClassName('file-row');
+      var toggleFilesButtons = document.getElementsByClassName("btn-transfusion-toggle-files");
+      if (this.classList.contains('btn-transfusion-toggle-all-files-active')) {
+        this.classList.remove('btn-transfusion-toggle-all-files-active');
+        for (var i = 0; i < toggleFilesButtons.length; i++) {
+            toggleFilesButtons[i].classList.remove('btn-transfusion-toggle-files-active');
+        }
+        for (var i = 0; i < toggleRows.length; i++) {
+            toggleRows[i].classList.remove('file-row-active');
+        }
+      } else {
+        this.classList.add('btn-transfusion-toggle-all-files-active');
+        for (var i = 0; i < toggleFilesButtons.length; i++) {
+          toggleFilesButtons[i].classList.add('btn-transfusion-toggle-files-active');
+        }
+        for (var i = 0; i < toggleRows.length; i++) {
+          toggleRows[i].classList.add('file-row-active');
+        }
+      }
+    }
+
+    var toggleAllFilesButton = document.getElementsByClassName("btn-transfusion-toggle-all-files");
+    toggleAllFilesButton[0].addEventListener("click", toggleAllAttachedFiles, false);
+
+    var toggleFilesButtons = document.getElementsByClassName("btn-transfusion-toggle-files");
+
+    for (var i = 0; i < toggleFilesButtons.length; i++) {
+      toggleAllFilesButton[0].classList.add('btn-transfusion-toggle-all-files-show');
+      toggleFilesButtons[i].addEventListener("click", toggleAttachedFiles, false);
+    }
 
     var checkMarkedForRemovalOrDeletion = function(event) {
       event.preventDefault();

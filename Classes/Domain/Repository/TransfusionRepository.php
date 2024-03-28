@@ -13,6 +13,7 @@ use TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction;
 use TYPO3\CMS\Core\Database\Query\Restriction\WorkspaceRestriction;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
+use TYPO3\CMS\Core\Resource\FileRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -34,9 +35,15 @@ class TransfusionRepository
      */
     protected IconFactory $iconFactory;
 
+    /**
+     * @var FileRepository
+     */
+    protected FileRepository $fileRepository;
+
     public function __construct()
     {
         $this->iconFactory = GeneralUtility::makeInstance(IconFactory::class);
+        $this->fileRepository = GeneralUtility::makeInstance(FileRepository::class);
     }
 
     /**
@@ -105,7 +112,31 @@ class TransfusionRepository
             )
             ->orderBy($transFusionFields['sorting'])
             ->executeQuery();
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file_reference');
+        $fileFields = $queryBuilder
+            ->select(
+                'fieldname'
+            )
+            ->from('sys_file_reference')
+            ->where(
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($page, Connection::PARAM_INT)),
+                $queryBuilder->expr()->eq('tablenames', $queryBuilder->createNamedParameter($table)),
+                $queryBuilder->expr()->eq('l10n_parent', 0),
+                $queryBuilder->expr()->eq('sys_language_uid', 0),
+            )
+            ->groupBy('fieldname')
+            ->executeQuery()
+            ->fetchAllAssociativeIndexed();
         while ($record = $defaultLanguageQuery->fetchAssociative()) {
+            $files = [];
+            if (!empty($fileFields)) {
+                foreach (array_keys($fileFields) as $fieldName) {
+                    $fileRecords = $this->fileRepository->findByRelation($table, $fieldName, $record['uid']);
+                    if (!empty($fileRecords)) {
+                        $files[$fieldName] = $fileRecords;
+                    }
+                }
+            }
             $preparedRecord = [
                 'uid' => $record['uid'],
                 'pid' => $record['pid'],
@@ -118,6 +149,9 @@ class TransfusionRepository
                 'icon' => $this->getIconForRecord($table, $record, $record[$transFusionFields['label']]),
                 'previewData' => $record
             ];
+            if (!empty($files)) {
+                $preparedRecord['relatedFiles'] = $files;
+            }
             $preparedRecord['column'] = ($table === 'tt_content' ? $record[$transFusionFields['column']] : '');
             $connectedRecords = $this->getConnectedTranslations(
                 $table,
@@ -179,6 +213,7 @@ class TransfusionRepository
                     !empty($dataMapRecord['brokenOrOrphaned'])
                     && !isset($assigned[$dataMapRecord['uid']])
                 ) {
+                    $preparedRecord['brokenConnections'] = [];
                     foreach ($dataMapRecord['brokenOrOrphaned'] as $brokenOrOrphaned) {
                         if ($brokenOrOrphaned['uid'] === $preparedRecord['uid']) {
                             // These records are partly matching their translation parent but are not connected yet
@@ -201,7 +236,7 @@ class TransfusionRepository
         foreach ($fullDataMap[$table] as $dataMapRecord) {
             if (!empty($dataMapRecord['uid']) && empty($assigned[$dataMapRecord['uid']])) {
                 if (!empty($dataMapRecord['brokenOrOrphaned'])) {
-                    $preparedRecord = ['brokenConnections' => []];
+                    $preparedRecord = ['orphanedConnections' => []];
                     foreach ($dataMapRecord['brokenOrOrphaned'] as $brokenOrOrphaned) {
                         $preparedRecord['orphanedConnections'][] = [
                             'uid' => $brokenOrOrphaned['uid'],
@@ -212,9 +247,6 @@ class TransfusionRepository
                             'previewData' => $dataMapRecord['previewData']
                         ];
                     }
-                }
-                if (!empty($preparedRecord)) {
-                    $defaultLanguageRecords[$dataMapRecord['uid']] = $preparedRecord;
                 }
             }
         }
@@ -404,8 +436,37 @@ class TransfusionRepository
                 $queryBuilder->expr()->eq($transFusionFields['language'], $language),
             )
             ->executeQuery();
+
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('sys_file_reference');
+        $queryBuilder
+            ->getRestrictions()
+            ->removeAll()
+            ->add(GeneralUtility::makeInstance(DeletedRestriction::class))
+            ->add(GeneralUtility::makeInstance(WorkspaceRestriction::class));
+        $fileFields = $queryBuilder
+            ->select(
+                'fieldname'
+            )
+            ->from('sys_file_reference')
+            ->where(
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($page, Connection::PARAM_INT)),
+                $queryBuilder->expr()->eq('tablenames', $queryBuilder->createNamedParameter($table)),
+                $queryBuilder->expr()->eq('sys_language_uid', $language),
+            )
+            ->groupBy('fieldname')
+            ->executeQuery()
+            ->fetchAllAssociativeIndexed();
         while ($record = $disconnectedRecords->fetchAssociative()) {
             $fetchPossibleParents = false;
+            $files = [];
+            if (!empty($fileFields)) {
+                foreach (array_keys($fileFields) as $fieldName) {
+                    $fileRecords = $this->fileRepository->findByRelation($table, $fieldName, $record['uid']);
+                    if (!empty($fileRecords)) {
+                        $files[$fieldName] = $fileRecords;
+                    }
+                }
+            }
             $preparedRecord = [
                 'uid' => $record['uid'],
                 'type' => $record[$transFusionFields['type']],
@@ -415,6 +476,9 @@ class TransfusionRepository
                 'original' => $record[$transFusionFields['original']],
                 'previewData' => $record
             ];
+            if (!empty($files)) {
+                $preparedRecord['relatedFiles'] = $files;
+            }
             $preparedRecord['column'] = ($table === 'tt_content' ? $record[$transFusionFields['column']] : '');
 
             $fetchFields = $transFusionFields['language'] . ',' . $transFusionFields['type'];

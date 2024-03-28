@@ -1,10 +1,17 @@
 <thead>
 <tr>
     <th class="transfusion-original">
-        <h2>Original Record
-            <core:icon identifier="actions-question-circle"
-                       title="Mandatory for translations in connected mode"/>
-        </h2>
+        <div class="header-wrapper">
+            <h2>Original Record
+                <core:icon identifier="actions-question-circle"
+                           title="Mandatory for translations in connected mode"/>
+            </h2>
+            <button class="btn btn-sm btn-default btn-transfusion-toggle-all-files" data-toggleid="{record.uid}">
+                <core:icon identifier="actions-chevron-down" title="Show attached files"/>
+                <core:icon identifier="actions-chevron-up" title="Hide attached files"/>
+                Files
+            </button>
+        </div>
     </th>
     <th class="transfusion-confirmed">
         <h2>Confirmed Connection

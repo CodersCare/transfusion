@@ -6,6 +6,10 @@
     padding: 0.75rem;
 }
 
+.module-transfusion-connector .t3-grid-table td {
+    vertical-align: top;
+}
+
 .module-transfusion-connector .t3-grid-table th.transfusion-original {
     color:var(--bs-secondary-text-emphasis);
     background:var(--bs-secondary-border-subtle);
@@ -82,12 +86,59 @@
     background:var(--bs-danger-border-subtle);
 }
 
+.module-transfusion-connector .t3-grid-table .header-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
 .module-transfusion-connector .t3-grid-table .t3-page-ce {
-    margin: 0.75rem;
+    margin: 0.5rem;
 }
 
 .module-transfusion-connector .t3-grid-table .t3-page-ce-element {
     margin-bottom: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.module-transfusion-connector .t3-grid-table .t3-page-ce-element .t3-page-ce-header {
+    padding: 0.5em;
+    min-height: 44px;
+    width: 100%;
+}
+
+.module-transfusion-connector .t3-grid-table .header-wrapper .btn-transfusion-toggle-all-files {
+    margin-top: 0.5em;
+    text-align: right;
+    display: none;
+}
+
+.module-transfusion-connector .t3-grid-table .header-wrapper .btn-transfusion-toggle-all-files-show {
+    display: inline-flex;
+}
+
+.module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .btn-transfusion-toggle-files {
+    margin-top: 0.5em;
+    text-align: right;
+}
+
+.module-transfusion-connector .t3-grid-table .header-wrapper .btn-transfusion-toggle-all-files .icon-actions-chevron-up,
+.module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .btn-transfusion-toggle-files .icon-actions-chevron-up {
+    display: none;
+}
+
+.module-transfusion-connector .t3-grid-table .header-wrapper  .btn-transfusion-toggle-all-files .icon-actions-chevron-down,
+.module-transfusion-connector .t3-grid-table .header-wrapper  .btn-transfusion-toggle-all-files-active .icon-actions-chevron-up,
+.module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .btn-transfusion-toggle-files .icon-actions-chevron-down,
+.module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .btn-transfusion-toggle-files-active .icon-actions-chevron-up {
+    display: block;
+}
+
+.module-transfusion-connector .t3-grid-table .header-wrapper  .btn-transfusion-toggle-all-files-active .icon-actions-chevron-down,
+.module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .btn-transfusion-toggle-files-active .icon-actions-chevron-down {
+    display: none;
 }
 
 .module-transfusion-connector .t3-grid-table .t3-page-ce-wrapper .t3-page-ce-header-left {
@@ -116,7 +167,15 @@
 .module-transfusion-connector .t3-grid-table .transfusion-confirmed .t3-page-ce-header-right .btn-transfusion-new,
 .module-transfusion-connector .t3-grid-table .transfusion-obvious .t3-page-ce-header-right .btn-transfusion-new,
 .module-transfusion-connector .t3-grid-table .transfusion-possible .t3-page-ce-header-right .btn-transfusion-new,
-.module-transfusion-connector .t3-grid-table .transfusion-broken .t3-page-ce-header-right .btn-transfusion-new {
+.module-transfusion-connector .t3-grid-table .transfusion-broken .t3-page-ce-header-right .btn-transfusion-new,
+.module-transfusion-connector .t3-grid-table .file-row {
     display: none;
 }
 
+.module-transfusion-connector .t3-grid-table .file-row td {
+    padding-left: 3em;
+}
+
+.module-transfusion-connector .t3-grid-table .file-row-active {
+    display: table-row;
+}
