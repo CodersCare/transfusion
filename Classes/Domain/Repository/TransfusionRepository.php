@@ -114,6 +114,7 @@ class TransfusionRepository
                 'parent' => $record[$transFusionFields['parent']],
                 'source' => $record[$transFusionFields['source']],
                 'original' => $record[$transFusionFields['original']],
+                'sorting' => $record[$transFusionFields['sorting']],
                 'icon' => $this->getIconForRecord($table, $record, $record[$transFusionFields['label']]),
                 'previewData' => $record
             ];
@@ -474,11 +475,15 @@ class TransfusionRepository
                     $preparedRecord['source'],
                     $fetchFields
                 );
-                $originalRecord = BackendUtility::getRecord(
-                    $table,
-                    $possibleParentRecord[$transFusionFields['original']],
-                    $fetchFields
-                );
+                if (!empty($possibleParentRecord)) {
+                    $originalRecord = BackendUtility::getRecord(
+                        $table,
+                        $possibleParentRecord[$transFusionFields['original']],
+                        $fetchFields
+                    );
+                } else {
+                    $originalRecord = [];
+                }
                 if ((
                     !empty($possibleParentRecord)
                     && $possibleParentRecord[$transFusionFields['language']] === 0
