@@ -5,7 +5,8 @@
 
 class TransfusionConnectorActions {
   constructor() {
-    var enableInputElements = function(inputElements, action){
+    var enableInputElements = function(fullElement, action){
+      var inputElements = fullElement.getElementsByTagName('input');
       for (var i = 0; i < inputElements.length; i++) {
         if (!inputElements[i].classList.contains(action)) {
           continue;
@@ -18,10 +19,10 @@ class TransfusionConnectorActions {
       button.classList.remove('btn-default');
       button.classList.add('btn-warning');
       var fullElement = button.closest('.t3-page-ce-wrapper');
-      var inputElements = fullElement.getElementsByClassName(action);
-      enableInputElements(inputElements, action)
+      enableInputElements(fullElement, action)
     }
-    var disableInputElements = function(inputElements, action){
+    var disableInputElements = function(fullElement, action){
+      var inputElements = fullElement.getElementsByTagName('input');
       for (var i = 0; i < inputElements.length; i++) {
         if (!inputElements[i].classList.contains(action)) {
           continue;
@@ -34,8 +35,7 @@ class TransfusionConnectorActions {
       button.classList.add('btn-default');
       button.classList.remove('btn-warning');
       var fullElement = button.closest('.t3-page-ce-wrapper');
-      var inputElements = fullElement.getElementsByClassName(action);
-      disableInputElements(inputElements, action)
+      disableInputElements(fullElement, action)
     }
     var moveOnceOrTwice = function(event) {
       event.preventDefault();
@@ -44,7 +44,8 @@ class TransfusionConnectorActions {
         var status = this.dataset.status;
         var action = this.dataset.action;
         var fullElement = this.closest('.t3-page-ce-wrapper');
-        var inputElements = fullElement.getElementsByTagName('input');
+        var deleteButton = fullElement.getElementsByClassName('btn-transfusion-delete')[0];
+        var detachButton = fullElement.getElementsByClassName('btn-transfusion-detach')[0];
         var parentCell = null;
         var targetCell = null;
         if (direction === 'left') {
@@ -65,7 +66,11 @@ class TransfusionConnectorActions {
               alert('You can only connect one target element to each original record!');
             } else {
               targetCell.append(fullElement);
-              enableInputElements(inputElements, 'change')
+              enableInputElements(fullElement, 'change')
+              deactivateButton(detachButton, 'btn-transfusion-detach');
+              disableInputElements(fullElement, 'detach');
+              deactivateButton(deleteButton, 'btn-transfusion-delete');
+              disableInputElements(fullElement, 'delete');
             }
           }
           if (parentCell !== null) {
@@ -73,9 +78,8 @@ class TransfusionConnectorActions {
               alert('You can only create one new parent element for each translated record!');
             } else {
               var parentElement = fullElement.cloneNode(true);
-              var parentInputElements = parentElement.getElementsByTagName('input');
               parentCell.append(parentElement);
-              enableInputElements(parentInputElements, 'new')
+              enableInputElements(parentElement, 'new')
             }
           }
         }
@@ -94,7 +98,7 @@ class TransfusionConnectorActions {
             if (status === 'orphaned') {
               fullElement.closest('tr').getElementsByClassName('transfusion-original')[0].getElementsByClassName('t3-page-ce-wrapper')[0].remove();
             }
-            disableInputElements(inputElements, 'change');
+            disableInputElements(fullElement, 'change');
           }
         }
       }
@@ -113,8 +117,13 @@ class TransfusionConnectorActions {
       if (deleteButton.getAttribute('disabled')==='disabled') {
         activateButton(this, 'delete');
         deactivateButton(detachButton, 'detach');
+        disableInputElements(fullElement, 'change');
       } else {
         deactivateButton(this, 'delete');
+        if (fullElement.closest('.transfusion-confirmed')
+          && fullElement.getElementsByClassName('btn-transfusion-selector').length) {
+          enableInputElements(fullElement, 'change');
+        }
       }
     }
 
@@ -132,8 +141,13 @@ class TransfusionConnectorActions {
       if (detachButton.getAttribute('disabled')==='disabled') {
         activateButton(this, 'detach');
         deactivateButton(deleteButton, 'delete');
+        disableInputElements(fullElement, 'change');
       } else {
         deactivateButton(this, 'detach');
+        if (fullElement.closest('.transfusion-confirmed')
+          && fullElement.getElementsByClassName('btn-transfusion-selector').length) {
+          enableInputElements(fullElement, 'change');
+        }
       }
     }
 
