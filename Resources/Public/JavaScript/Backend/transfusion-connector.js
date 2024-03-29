@@ -113,7 +113,6 @@ class TransfusionConnectorActions {
       if (deleteButton.getAttribute('disabled')==='disabled') {
         activateButton(this, 'delete');
         deactivateButton(removeButton, 'remove');
-        alert('Marked for deletion');
       } else {
         deactivateButton(this, 'delete');
       }
@@ -133,7 +132,6 @@ class TransfusionConnectorActions {
       if (removeButton.getAttribute('disabled')==='disabled') {
         activateButton(this, 'remove');
         deactivateButton(deleteButton, 'delete');
-        alert('Marked for removal of all connections');
       } else {
         deactivateButton(this, 'remove');
       }
