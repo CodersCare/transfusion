@@ -45,7 +45,9 @@
                         <div class="t3-page-ce-header-right">
                             <f:if condition="{status}!='orphaned'">
                                 <f:then>
-                                    <button class="btn btn-default btn-sm btn-transfusion-detach" title="Remove all connection information. Creates an orphaned record!">
+                                    <button class="btn btn-default btn-sm btn-transfusion-detach" title="Detach all connection information. Creates an orphaned record!"
+                                            data-enabledtitle="Reattach all connection information!"
+                                            data-disabledtitle="Detach all connection information. Creates an orphaned record!">
                                         <core:icon identifier="actions-unlink"/>
                                     </button>
                                 </f:then>
