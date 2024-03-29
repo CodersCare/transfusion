@@ -66,11 +66,15 @@ class TransfusionConnectorActions {
               alert('You can only connect one target element to each original record!');
             } else {
               targetCell.append(fullElement);
-              enableInputElements(fullElement, 'change')
-              deactivateButton(detachButton, 'btn-transfusion-detach');
-              disableInputElements(fullElement, 'detach');
-              deactivateButton(deleteButton, 'btn-transfusion-delete');
-              disableInputElements(fullElement, 'delete');
+              enableInputElements(fullElement, 'change');
+              if (detachButton) {
+                deactivateButton(detachButton, 'detach');
+                disableInputElements(fullElement, 'detach');
+              }
+              if (deleteButton) {
+                deactivateButton(deleteButton, 'delete');
+                disableInputElements(fullElement, 'delete');
+              }
             }
           }
           if (parentCell !== null) {

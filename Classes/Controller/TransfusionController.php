@@ -175,15 +175,13 @@ class TransfusionController
             $language = (int)$queryParams['disconnect']['language'];
             $page = (int)$queryParams['disconnect']['page'];
 
-            if (!empty($tables)) {
-                foreach ($tables as $table) {
-                    $this->dataMap[$table] = $this->transfusionRepository->fetchConnectedRecordsAndPrepareDataMap(
-                        $table,
-                        $language,
-                        $page,
-                        'disconnect'
-                    );
-                }
+            foreach ($tables as $table) {
+                $this->dataMap[$table] = $this->transfusionRepository->fetchConnectedRecordsAndPrepareDataMap(
+                    $table,
+                    $language,
+                    $page,
+                    'disconnect'
+                );
             }
         }
 

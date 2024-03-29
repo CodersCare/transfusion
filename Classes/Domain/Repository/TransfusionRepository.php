@@ -65,7 +65,6 @@ class TransfusionRepository
         }
 
         return $defaultLanguageRecords;
-
     }
 
     /**
@@ -197,8 +196,10 @@ class TransfusionRepository
             }
             $defaultLanguageRecords[$preparedRecord['uid']] = $preparedRecord;
         }
+
         // Look for orphaned records that did not match the previous process
         foreach ($fullDataMap[$table] as $dataMapRecord) {
+            $preparedRecord = [];
             if (!empty($dataMapRecord['uid']) && empty($assigned[$dataMapRecord['uid']])) {
                 if (!empty($dataMapRecord['brokenOrOrphaned'])) {
                     $preparedRecord = ['brokenConnections' => []];
@@ -218,6 +219,7 @@ class TransfusionRepository
                 }
             }
         }
+
         return $defaultLanguageRecords;
     }
 
@@ -465,14 +467,26 @@ class TransfusionRepository
                 $fetchPossibleParents = true;
             }
             $fullDataMap[$table][$preparedRecord['uid']] = $preparedRecord;
-            $fetchFields .= ',' . $transFusionFields['original'] . ',uid';
+            $fetchFields .= ',' . $transFusionFields['source'] . ',' . $transFusionFields['original'] . ',uid';
             if ($fetchPossibleParents) {
                 $possibleParentRecord = BackendUtility::getRecord(
                     $table,
                     $preparedRecord['source'],
                     $fetchFields
                 );
-                if (!empty($possibleParentRecord)) {
+                $originalRecord = BackendUtility::getRecord(
+                    $table,
+                    $possibleParentRecord[$transFusionFields['original']],
+                    $fetchFields
+                );
+                if ((
+                    !empty($possibleParentRecord)
+                    && $possibleParentRecord[$transFusionFields['language']] === 0
+                )
+                || (
+                    !empty($originalRecord)
+                    && $originalRecord[$transFusionFields['language']] === 0
+                )) {
                     if (
                         $possibleParentRecord[$transFusionFields['type']] === $preparedRecord['type']
                     ) {
