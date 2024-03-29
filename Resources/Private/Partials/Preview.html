@@ -45,7 +45,7 @@
                         <div class="t3-page-ce-header-right">
                             <f:if condition="{status}!='orphaned'">
                                 <f:then>
-                                    <button class="btn btn-default btn-sm btn-transfusion-remove" title="Remove all connection information. Creates an orphaned record!">
+                                    <button class="btn btn-default btn-sm btn-transfusion-detach" title="Remove all connection information. Creates an orphaned record!">
                                         <core:icon identifier="actions-unlink"/>
                                     </button>
                                 </f:then>
@@ -115,12 +115,12 @@
                     </f:if>
                 </f:else>
             </f:if>
-            <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.parent}]" class="remove"
+            <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.parent}]" class="detach"
                    type="hidden" value="0"/>
-            <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.source}]" class="remove"
+            <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.source}]" class="detach"
                    type="hidden"
                    value="0"/>
-            <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.original}]" class="remove"
+            <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.original}]" class="detach"
                    type="hidden"
                    value="0"/>
         </div>

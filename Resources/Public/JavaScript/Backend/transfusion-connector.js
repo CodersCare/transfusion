@@ -109,10 +109,10 @@ class TransfusionConnectorActions {
       event.preventDefault();
       var fullElement = this.closest('.t3-page-ce-wrapper');
       var deleteButton = fullElement.getElementsByClassName('delete')[0];
-      var removeButton = fullElement.getElementsByClassName('btn-transfusion-remove')[0];
+      var detachButton = fullElement.getElementsByClassName('btn-transfusion-detach')[0];
       if (deleteButton.getAttribute('disabled')==='disabled') {
         activateButton(this, 'delete');
-        deactivateButton(removeButton, 'remove');
+        deactivateButton(detachButton, 'detach');
       } else {
         deactivateButton(this, 'delete');
       }
@@ -124,35 +124,35 @@ class TransfusionConnectorActions {
       deleteButtons[i].addEventListener("click", markForDeletion, false);
     }
 
-    var removeAllConnections = function(event) {
+    var detachAllConnections = function(event) {
       event.preventDefault();
       var fullElement = this.closest('.t3-page-ce-wrapper');
-      var removeButton = fullElement.getElementsByClassName('remove')[0];
+      var detachButton = fullElement.getElementsByClassName('detach')[0];
       var deleteButton = fullElement.getElementsByClassName('btn-transfusion-delete')[0];
-      if (removeButton.getAttribute('disabled')==='disabled') {
-        activateButton(this, 'remove');
+      if (detachButton.getAttribute('disabled')==='disabled') {
+        activateButton(this, 'detach');
         deactivateButton(deleteButton, 'delete');
       } else {
-        deactivateButton(this, 'remove');
+        deactivateButton(this, 'detach');
       }
     }
 
-    var removeButtons = document.getElementsByClassName("btn-transfusion-remove");
+    var detachButtons = document.getElementsByClassName("btn-transfusion-detach");
 
-    for (var i = 0; i < removeButtons.length; i++) {
-      removeButtons[i].addEventListener("click", removeAllConnections, false);
+    for (var i = 0; i < detachButtons.length; i++) {
+      detachButtons[i].addEventListener("click", detachAllConnections, false);
     }
 
     var checkMarkedForRemovalOrDeletion = function(event) {
       event.preventDefault();
-      var markedForRemoval = this.getElementsByClassName('btn-transfusion-remove btn-warning');
+      var markedForRemoval = this.getElementsByClassName('btn-transfusion-detach btn-warning');
       var markedForDeletion = this.getElementsByClassName('btn-transfusion-delete btn-warning');
       if (markedForRemoval.length && markedForDeletion.length) {
-        if (confirm('Are you sure you want to remove connections from or delete marked records?')) {
+        if (confirm('Are you sure you want to detach connections from or delete marked records?')) {
           this.submit();
         }
       } else if (markedForRemoval.length) {
-        if (confirm('Are you sure you want to remove connections from marked records?')) {
+        if (confirm('Are you sure you want to detach connections from marked records?')) {
           this.submit();
         }
       } else if (markedForDeletion.length) {
