@@ -1,19 +1,25 @@
-#
-# Ignore temporary files (left by editors and OS)
+# Git global ignore file
+# for local exclude patterns please edit .git/info/exclude
+# Example file see https://github.com/TYPO3-Documentation/T3DocTeam/blob/main/.gitignore
+
+# ignore generated documentation
+*GENERATED*
+
+# ignore typical clutter of IDEs and editors (this could be added in .git/info/exclude,
+#  but we add it here for convenience)
 *~
 *.bak
-*.swp
-.DS_Store
-#
-# Ignore by common IDEs used directories/files
-nbproject
 *.idea
 *.project
+*.swp
+.project
+.webprj
+nbproject
+.DS_Store
 *.vscode
 .buildpath
 .settings
 .TemporaryItems
-.webprj
 .fleet
 #
 # Temporary files and folders
