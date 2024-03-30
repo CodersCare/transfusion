@@ -83,48 +83,54 @@
                 </div>
             </div>
         </div>
-        <div class="transfusion-input-wrapper">
-            <f:if condition="{status}=='orphaned'">
-                <f:then>
-                    <input disabled="disabled" name="cmdMap[{table}][{record.previewData.uid}][delete]" class="delete"
-                           type="hidden" value="1"/>
-                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.type}]" class="new"
-                           type="hidden"
-                           value="{record.type}"/>
-                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][pid]" class="new"
-                           type="hidden"
-                           value="{record.pid}"/>
-                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.label}]" class="new"
-                           type="hidden"
-                           value="[NEW] {record.label}"/>
-                    <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.parent}]" class="change"
-                           type="hidden" value="{record.uid}"/>
-                    <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.source}]" class="change"
-                           type="hidden" value="{record.uid}"/>
-                </f:then>
-                <f:else>
-                    <input disabled="disabled" name="cmdMap[{table}][{record.uid}][delete]" class="delete"
-                           type="hidden" value="1"/>
-                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.parent}]" class="change"
-                           type="hidden" value="{original.uid}"/>
-                    <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.type}]" class="change"
-                           type="hidden"
-                           value="{original.type}"/>
-                    <f:if condition="{original.column} !== ''">
-                        <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.column}]"
-                               class="change"
-                               type="hidden" value="{original.column}"/>
-                    </f:if>
-                </f:else>
-            </f:if>
-            <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.parent}]" class="detach"
-                   type="hidden" value="0"/>
-            <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.source}]" class="detach"
-                   type="hidden"
-                   value="0"/>
-            <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.original}]" class="detach"
-                   type="hidden"
-                   value="0"/>
-        </div>
+        <f:if condition="{status}!='original'">
+            <div class="transfusion-input-wrapper">
+                <f:if condition="{status}=='orphaned'">
+                    <f:then>
+                        <input disabled="disabled" name="cmdMap[{table}][{record.previewData.uid}][delete]" class="delete"
+                               type="hidden" value="1"/>
+                        <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.type}]" class="new"
+                               type="hidden"
+                               value="{record.type}"/>
+                        <input disabled="disabled" name="dataMap[{table}][{record.uid}][pid]" class="new"
+                               type="hidden"
+                               value="{record.pid}"/>
+                        <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.label}]" class="new"
+                               type="hidden"
+                               value="[NEW] {record.label}"/>
+                        <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.parent}]" class="change"
+                               type="hidden" value="{record.uid}"/>
+                        <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.source}]" class="change"
+                               type="hidden" value="{record.uid}"/>
+                    </f:then>
+                    <f:else>
+                        <input disabled="disabled" name="cmdMap[{table}][{record.uid}][delete]" class="delete"
+                               type="hidden" value="1"/>
+                        <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.parent}]" class="change"
+                               type="hidden" value="{original.uid}"/>
+                        <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.type}]" class="change"
+                               type="hidden"
+                               value="{original.type}"/>
+                        <f:if condition="{original.column} !== ''">
+                            <input disabled="disabled" name="dataMap[{table}][{record.uid}][{transFusionFields.column}]"
+                                   class="change"
+                                   type="hidden" value="{original.column}"/>
+                        </f:if>
+                        <f:if condition="{transFusionFields.sorting}">
+                            <input name="dataMap[{table}][{record.uid}][{transFusionFields.sorting}]"
+                                   type="hidden" value="{original.sorting + 32}"/>
+                        </f:if>
+                    </f:else>
+                </f:if>
+                <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.parent}]" class="detach"
+                       type="hidden" value="0"/>
+                <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.source}]" class="detach"
+                       type="hidden"
+                       value="0"/>
+                <input disabled="disabled" name="dataMap[{table}][{record.previewData.uid}][{transFusionFields.original}]" class="detach"
+                       type="hidden"
+                       value="0"/>
+            </div>
+        </f:if>
     </div>
 </f:if>

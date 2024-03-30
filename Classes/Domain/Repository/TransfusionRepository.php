@@ -102,7 +102,8 @@ class TransfusionRepository
                 $queryBuilder->expr()->eq($transFusionFields['language'], 0),
                 $queryBuilder->expr()->eq($transFusionFields['parent'], 0)
             )
-            ->orderBy($transFusionFields['sorting'])
+            ->addOrderBy($table === 'tt_content' ? 'colPos' : '')
+            ->addOrderBy($transFusionFields['sorting'])
             ->executeQuery();
         while ($record = $defaultLanguageQuery->fetchAssociative()) {
             $preparedRecord = [

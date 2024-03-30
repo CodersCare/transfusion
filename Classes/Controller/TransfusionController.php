@@ -57,6 +57,9 @@ class TransfusionController
         $this->dataMap = $request->getParsedBody()['dataMap'] ?? [];
 
         if (!empty($this->cmdMap) || !empty($this->dataMap)) {
+            $this->dataHandler->overrideValues = [
+                'storeSortingValuesForTransFusion' => true
+            ];
             $this->executeDataHandler();
         }
 
