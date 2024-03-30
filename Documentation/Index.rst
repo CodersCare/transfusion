@@ -13,7 +13,7 @@ TransFusion
     t3thi/transfusion
 
 :Version:
-    0.1.0
+    0.0.1
 
 :Language:
     en
