@@ -1,10 +1,10 @@
 ..  include:: /Includes.rst.txt
 
-..  _known-problems:
+..  _sponsoring:
 
-==============
-Known problems
-==============
+==========
+Sponsoring
+==========
 
 Use this section for informing about any type of of problem.
 

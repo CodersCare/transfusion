@@ -6,50 +6,46 @@
 Introduction
 ============
 
+New to multilingual TYPO3 and translations?
+===========================================
+
 ..  tip::
 
-    New to reStructuredText and Sphinx?
-
     Get an introduction:
-    https://docs.typo3.org/m/typo3/docs-how-to-document/master/en-us/WritingReST/Index.html
+    https://docs.typo3.org/m/typo3/tutorial-editors/main/en-us/Languages/Index.html
 
-    Use this cheat sheet as reference:
-    https://docs.typo3.org/m/typo3/docs-how-to-document/master/en-us/WritingReST/CheatSheet.html
+    Gte more details about frontend localization and especiall connected and free mode translations:
+    https://docs.typo3.org/m/typo3/guide-frontendlocalization/main/en-us/Index.html
 
 ..  _what-it-does:
 
 What does it do?
 ================
 
-The aim of this chapter is to provide a general overview of your extension.
-
-*   What does it do?
-*   What problems does it solve?
-*   Who is the target audience?
-
-This chapter should provide information that will help inform
-potential users and assist them in deciding if they should
-install and use this extension.
-
 ..  attention::
 
-    Do not forget to set extension's version number in :file:`Settings.cfg` file,
-    in the :code:`release` property.
-    It will be automatically picked up on the cover page by the :code:`|release|` substitution.
+    **The TransFusion extension is currently a work in progress and in an early alpha state!**
 
-..  _screenshots:
+    While it effectively manages disconnecting and reconnecting default CTypes of the original TYPO3 core, it currently lacks the capability to handle inline relations such as file references or container elements with children.
 
-Screenshots
-===========
+    **Please use this tool at your own risk.**
 
-This chapter should help people understand how the extension works.
-Remove it if it is not relevant.
+TransFusion is designed to assist TYPO3 editors in managing connected, free, and mixed mode translations within the language view of the page module. It offers distinct functionalities tailored to each mode, accessible via dedicated buttons.
 
-..  figure:: /Images/IntroductionPackage.png
+..  figure:: /Images/TransFusionButtons.png
     :class: with-shadow
     :alt: Introduction Package
-    :width: 300px
+    :width: 1024px
 
-    Introduction Package after installation (caption of the image).
+    TransFusion buttons in the language view of the page module.
 
-How the Frontend of the Introduction Package looks like after installation (legend of the image).
+In connected mode, editors can disconnect existing connections, while in free or mixed mode, they can easily reconnect disconnected or unconnected records.
+
+While record disconnection occurs instantly, transitioning the target language content to free mode, reconnection requires interaction. TransFusion simplifies this process with a Connector for the Page Module. This tool categorizes available target language records based on their states, ranging from confirmed to broken or orphaned, facilitating the identification of unconnected records associated with a parent record in the default language.
+
+..  figure:: /Images/TransFusionConnector.png
+    :class: with-shadow
+    :alt: Introduction Package
+    :width: 1024px
+
+    TransFusion connector in the language view of the page module.

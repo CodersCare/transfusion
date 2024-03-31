@@ -1,10 +1,10 @@
 ..  include:: /Includes.rst.txt
 
-..  _for-editors:
+..  _usersManual:
 
-===========
-For Editors
-===========
+==============
+Editors Manual
+==============
 
 How to use the extension from the perspective of an editor.
 
