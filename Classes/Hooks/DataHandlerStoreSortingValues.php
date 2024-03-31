@@ -25,9 +25,9 @@ class DataHandlerStoreSortingValues
                             'type' => 'passthrough'
                         ]
                     ];
-                    $dataHandler->overrideValues['keepSortingFieldForTransFusion'] = $sortBy;
+                    $dataHandler->overrideValues['removeTransFusionSortingField'] = $sortBy;
                 } else {
-                    $dataHandler->overrideValues['keepSortingFieldForTransFusion'] = '';
+                    $dataHandler->overrideValues['removeTransFusionSortingField'] = '';
                 }
             }
         }
@@ -42,7 +42,7 @@ class DataHandlerStoreSortingValues
     ): void
     {
         if (!empty($dataHandler->overrideValues['storeSortingValuesForTransFusion'])) {
-            $sortBy = $dataHandler->overrideValues['keepSortingFieldForTransFusion'] ?? '';
+            $sortBy = $dataHandler->overrideValues['removeTransFusionSortingField'] ?? '';
             // if there was no configured sorting column, remove it now
             if (!empty($sortBy) && isset($GLOBALS['TCA'][$table]['columns'][$sortBy])) {
                 unset($GLOBALS['TCA'][$table]['columns'][$sortBy]);
